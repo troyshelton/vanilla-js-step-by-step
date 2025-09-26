@@ -96,12 +96,15 @@
 
     <div class="container">
         <h2>📱 Contact Management</h2>
+        <p style="margin: 10px 0; color: #666;">
+            💡 <strong>Groups Multi-Select:</strong> Ctrl+Click (PC) or Cmd+Click (Mac) to select multiple groups, or leave empty for unassigned contact
+        </p>
 
         <div class="input-group" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
             <input type="text" id="contact-name" placeholder="Name" value="John Smith" style="flex: 1; min-width: 150px;">
             <input type="text" id="contact-phone" placeholder="Phone" value="555-0123" style="flex: 1; min-width: 120px;">
             <input type="text" id="contact-email" placeholder="Email" value="john@email.com" style="flex: 1; min-width: 180px;">
-            <select id="group-multiselect" multiple style="flex: 1; min-width: 150px; height: 40px;">
+            <select id="group-multiselect" multiple style="flex: 1; min-width: 180px; height: 60px; padding: 5px; border: 2px solid #ddd; border-radius: 4px; font-family: Arial, sans-serif;">
                 <!-- Dynamic options will appear here -->
             </select>
             <button onclick="addContactWithGroups()" style="white-space: nowrap;">Add Contact</button>
@@ -204,13 +207,24 @@
             multiSelect.innerHTML = '';
 
             if (groups.length === 0) {
-                // Add placeholder option when no groups exist
-                const option = document.createElement('option');
-                option.textContent = 'Create groups first';
-                option.disabled = true;
-                multiSelect.appendChild(option);
+                // Add helpful placeholder when no groups exist
+                const placeholderOption = document.createElement('option');
+                placeholderOption.textContent = '(No groups created yet - create groups first)';
+                placeholderOption.disabled = true;
+                placeholderOption.style.fontStyle = 'italic';
+                placeholderOption.style.color = '#999';
+                multiSelect.appendChild(placeholderOption);
                 return;
             }
+
+            // Add instruction option at the top
+            const instructionOption = document.createElement('option');
+            instructionOption.textContent = '--- Select groups (Ctrl+Click for multiple) ---';
+            instructionOption.disabled = true;
+            instructionOption.style.fontStyle = 'italic';
+            instructionOption.style.color = '#666';
+            instructionOption.style.backgroundColor = '#f8f9fa';
+            multiSelect.appendChild(instructionOption);
 
             // Add option for each group
             groups.forEach(group => {
