@@ -2,12 +2,6 @@
 (function(window) {
     'use strict';
 
-    // Private constants for group types
-    const GROUP_TYPES = {
-        FAMILY: 'family',
-        FRIENDS: 'friends',
-        COWORKERS: 'coworkers'
-    };
 
     // Private helper function
     function generateGroupId() {
@@ -25,7 +19,7 @@
         const group = {
             id: generateGroupId(),
             name: name,
-            type: type || GROUP_TYPES.FRIENDS,
+            type: type || 'general',
             contactIds: [],
             dateCreated: new Date()
         };
@@ -127,9 +121,6 @@
             };
         });
     };
-
-    // Expose constants
-    GroupService.TYPES = GROUP_TYPES;
 
     // Expose the service to global namespace
     window.GroupService = GroupService;
