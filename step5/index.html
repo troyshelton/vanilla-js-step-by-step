@@ -606,10 +606,12 @@
             console.log('  deleteContact(contactId)     - Delete with confirmation');
 
             console.log('\n🔄 Group Operations:');
-            console.log('  changeContactGroups(contactId, [groupId1, groupId2])');
+            console.log('  changeContactGroups(contactId, [groupIds])  - REPLACE all groups');
+            console.log('  addToGroup(contactId, groupId)              - Add to one group');
+            console.log('  removeFromGroup(contactId, groupId)         - Remove from one group');
 
             console.log('\n🔄 Refresh:');
-            console.log('  refreshManageView()          - Update management panel');
+            console.log('  refreshManageView()                         - Update management panel');
 
             console.groupEnd();
             console.log('\n🎯 Start with: showIds() to see all available IDs!');
@@ -707,7 +709,7 @@
             }
         };
 
-        // Change contact groups (call from console)
+        // Change contact groups - REPLACES all group memberships (call from console)
         window.changeContactGroups = function(contactId, newGroupIds) {
             const contact = contactService.getContactById(contactId);
             if (!contact) {
@@ -727,8 +729,63 @@
             });
 
             console.log(`✅ Updated groups for: ${contact.name}`);
+            console.log(`📋 Now in: ${newGroupIds.length} group(s)`);
             console.log('Run: refreshManageView() to see changes');
             return true;
+        };
+
+        // Add contact to a specific group (call from console)
+        window.addToGroup = function(contactId, groupId) {
+            const contact = contactService.getContactById(contactId);
+            const group = groupService.getAllGroups().find(g => g.id === groupId);
+
+            if (!contact) {
+                console.error(`❌ Contact not found: ${contactId}`);
+                return false;
+            }
+
+            if (!group) {
+                console.error(`❌ Group not found: ${groupId}`);
+                return false;
+            }
+
+            const success = groupService.addContactToGroup(groupId, contactId);
+
+            if (success) {
+                console.log(`✅ Added ${contact.name} to ${group.name}`);
+                console.log('Run: refreshManageView() to see changes');
+            } else {
+                console.log(`⚠️ ${contact.name} already in ${group.name}`);
+            }
+
+            return success;
+        };
+
+        // Remove contact from a specific group (call from console)
+        window.removeFromGroup = function(contactId, groupId) {
+            const contact = contactService.getContactById(contactId);
+            const group = groupService.getAllGroups().find(g => g.id === groupId);
+
+            if (!contact) {
+                console.error(`❌ Contact not found: ${contactId}`);
+                return false;
+            }
+
+            if (!group) {
+                console.error(`❌ Group not found: ${groupId}`);
+                return false;
+            }
+
+            const success = groupService.removeContactFromGroup(groupId, contactId);
+
+            if (success) {
+                console.log(`✅ Removed ${contact.name} from ${group.name}`);
+                console.log('Run: refreshManageView() to see changes');
+            } else {
+                console.log(`⚠️ ${contact.name} not in ${group.name}`);
+            }
+
+            return success;
         };
 
         // === ARCHITECTURE DEMONSTRATION ===
