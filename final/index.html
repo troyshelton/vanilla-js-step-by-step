@@ -189,8 +189,10 @@
                 groupService = new GroupService();
                 searchService = SearchService.createWithGlobalServices(contactService, groupService);
 
+                // Initialize the multi-select with placeholder
+                updateGroupCheckboxes();
+
                 console.log('🎉 All services initialized successfully!');
-                generateStats(); // Show initial stats
             } catch (error) {
                 console.error('❌ Initialization failed:', error.message);
             }
@@ -206,25 +208,25 @@
             // Clear existing options
             multiSelect.innerHTML = '';
 
+            // Always add a default placeholder option
+            const placeholderOption = document.createElement('option');
+            placeholderOption.value = '';
+            placeholderOption.disabled = true;
+            placeholderOption.selected = true;
+            placeholderOption.style.fontStyle = 'italic';
+            placeholderOption.style.color = '#999';
+
             if (groups.length === 0) {
-                // Add helpful placeholder when no groups exist
-                const placeholderOption = document.createElement('option');
-                placeholderOption.textContent = '(No groups created yet - create groups first)';
-                placeholderOption.disabled = true;
-                placeholderOption.style.fontStyle = 'italic';
-                placeholderOption.style.color = '#999';
-                multiSelect.appendChild(placeholderOption);
-                return;
+                placeholderOption.textContent = 'Select groups... (create groups first)';
+            } else {
+                placeholderOption.textContent = 'Select groups... (Ctrl+Click for multiple)';
             }
 
-            // Add instruction option at the top
-            const instructionOption = document.createElement('option');
-            instructionOption.textContent = '--- Select groups (Ctrl+Click for multiple) ---';
-            instructionOption.disabled = true;
-            instructionOption.style.fontStyle = 'italic';
-            instructionOption.style.color = '#666';
-            instructionOption.style.backgroundColor = '#f8f9fa';
-            multiSelect.appendChild(instructionOption);
+            multiSelect.appendChild(placeholderOption);
+
+            if (groups.length === 0) {
+                return;
+            }
 
             // Add option for each group
             groups.forEach(group => {
@@ -291,8 +293,9 @@
             document.getElementById('contact-phone').value = '';
             document.getElementById('contact-email').value = '';
 
-            // Clear multi-select selections
-            document.getElementById('group-multiselect').selectedIndex = -1;
+            // Reset multi-select to placeholder
+            const multiSelect = document.getElementById('group-multiselect');
+            multiSelect.selectedIndex = 0; // Select the placeholder option
         }
 
         function addContact() {
