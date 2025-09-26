@@ -107,7 +107,7 @@
             <div style="flex: 1; min-width: 180px; position: relative;">
                 <label for="group-multiselect" style="font-size: 12px; color: #666; margin-bottom: 2px; display: block;">Groups (optional)</label>
                 <select id="group-multiselect" multiple style="width: 100%; height: 60px; padding: 5px; border: 2px solid #ddd; border-radius: 4px; font-family: Arial, sans-serif;">
-                    <option disabled selected style="font-style: italic; color: #999;">Select groups... (create groups first)</option>
+                    <!-- Groups will be populated dynamically -->
                 </select>
             </div>
             <button onclick="addContactWithGroups()" style="white-space: nowrap;">Add Contact</button>
@@ -211,21 +211,9 @@
             // Clear existing options
             multiSelect.innerHTML = '';
 
-            // Always add a default placeholder option
-            const placeholderOption = document.createElement('option');
-            placeholderOption.value = '';
-            placeholderOption.disabled = true;
-            placeholderOption.selected = true;
-            placeholderOption.style.fontStyle = 'italic';
-            placeholderOption.style.color = '#999';
-
+            // If no groups exist, leave multi-select empty (label explains purpose)
             if (groups.length === 0) {
-                placeholderOption.textContent = 'Select groups... (create groups first)';
-                multiSelect.appendChild(placeholderOption);
                 return;
-            } else {
-                placeholderOption.textContent = 'Select groups... (optional)';
-                multiSelect.appendChild(placeholderOption);
             }
 
             // Add option for each group
