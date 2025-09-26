@@ -56,8 +56,10 @@ vanilla-js-step-by-step/
 │   └── README.md                # Guided instructions
 ├── step3/                       # 🔍 Add SearchService
 │   └── README.md                # Guided instructions
-└── step4/                       # ⚖️ Prototype vs ES6 comparison
-    └── README.md                # Guided instructions
+├── step4/                       # ⚖️ Prototype vs ES6 comparison
+│   └── README.md                # Guided instructions
+└── step5/                       # ✏️ Update & Delete (Optional)
+    └── README.md                # Advanced CRUD operations
 ```
 
 ## 🎓 Learning Path (Progressive Steps)
@@ -110,6 +112,21 @@ vanilla-js-step-by-step/
 
 **Outcome**: Understanding of both patterns and when to use each
 
+---
+
+### **✏️ Step 5: Update & Delete Operations** *(~20 minutes)* **[OPTIONAL/ADVANCED]**
+**You'll Build**: Complete CRUD operations for real-world completeness
+
+**Learn**:
+- **Updating service data** - Modify existing objects in arrays
+- **Delete operations** - Safe removal with confirmations
+- **Group reassignment** - Change contact-group relationships
+- **Cascade operations** - Delete contact → remove from all groups
+
+**Outcome**: Complete Contact Manager with full CRUD capabilities
+
+⭐ **Note**: Steps 1-4 cover all core JavaScript architecture concepts. Step 5 adds practical features but is optional for learning the architectural patterns.
+
 ## 🧪 What Makes This Tutorial Effective
 
 ### **✅ You Build It Yourself:**
@@ -123,6 +140,7 @@ vanilla-js-step-by-step/
 - **Step 2**: Multiple independent services
 - **Step 3**: Service dependencies (the hard part!)
 - **Step 4**: Pattern comparison
+- **Step 5**: Update & Delete operations (optional)
 
 ### **✅ Reference Solution Available:**
 - **Stuck?** Check `final/` directory for working version
@@ -175,11 +193,13 @@ You'll know you've mastered these concepts when you can:
 5. **Get stuck?** Reference `final/` for working solution
 
 ### **Time Commitment:**
-- **Total**: ~75 minutes
-- **Step 1**: 20 minutes
-- **Step 2**: 15 minutes
-- **Step 3**: 25 minutes (most important!)
-- **Step 4**: 15 minutes
+- **Core Tutorial (Steps 1-4)**: ~75 minutes
+  - **Step 1**: 20 minutes
+  - **Step 2**: 15 minutes
+  - **Step 3**: 25 minutes (most important!)
+  - **Step 4**: 15 minutes
+- **Optional Advanced (Step 5)**: ~20 minutes
+  - Update & Delete operations for CRUD completion
 
 ## 🔗 Related Resources
 
