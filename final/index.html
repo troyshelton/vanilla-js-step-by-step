@@ -97,18 +97,14 @@
     <div class="container">
         <h2>📱 Contact Management</h2>
 
-        <div class="input-group">
-            <input type="text" id="contact-name" placeholder="Name" value="John Smith">
-            <input type="text" id="contact-phone" placeholder="Phone" value="555-0123">
-            <input type="text" id="contact-email" placeholder="Email" value="john@email.com">
-
-            <h4>Assign to Groups (optional):</h4>
-            <div id="group-checkboxes">
-                <!-- Dynamic checkboxes will appear here -->
-                <p>💡 Create groups first to see assignment options</p>
-            </div>
-
-            <button onclick="addContactWithGroups()">Add Contact</button>
+        <div class="input-group" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <input type="text" id="contact-name" placeholder="Name" value="John Smith" style="flex: 1; min-width: 150px;">
+            <input type="text" id="contact-phone" placeholder="Phone" value="555-0123" style="flex: 1; min-width: 120px;">
+            <input type="text" id="contact-email" placeholder="Email" value="john@email.com" style="flex: 1; min-width: 180px;">
+            <select id="group-multiselect" multiple style="flex: 1; min-width: 150px; height: 40px;">
+                <!-- Dynamic options will appear here -->
+            </select>
+            <button onclick="addContactWithGroups()" style="white-space: nowrap;">Add Contact</button>
         </div>
 
         <div class="button-group">
@@ -199,41 +195,32 @@
 
         // === CONTACT MANAGEMENT FUNCTIONS ===
 
-        // Update group checkboxes when groups change
+        // Update group multi-select when groups change
         function updateGroupCheckboxes() {
-            const checkboxContainer = document.getElementById('group-checkboxes');
+            const multiSelect = document.getElementById('group-multiselect');
             const groups = groupService.getAllGroups();
 
+            // Clear existing options
+            multiSelect.innerHTML = '';
+
             if (groups.length === 0) {
-                checkboxContainer.innerHTML = '<p>💡 Create groups first to see assignment options</p>';
+                // Add placeholder option when no groups exist
+                const option = document.createElement('option');
+                option.textContent = 'Create groups first';
+                option.disabled = true;
+                multiSelect.appendChild(option);
                 return;
             }
 
-            // Create dynamic checkboxes for each group
-            checkboxContainer.innerHTML = '';
+            // Add option for each group
             groups.forEach(group => {
-                const label = document.createElement('label');
-                label.style.display = 'block';
-                label.style.margin = '5px 0';
-
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.id = `group-${group.id}`;
-                checkbox.value = group.id;
-
-                label.appendChild(checkbox);
-                label.appendChild(document.createTextNode(` ${group.name}`));
-                checkboxContainer.appendChild(label);
+                const option = document.createElement('option');
+                option.value = group.id;
+                option.textContent = group.name;
+                multiSelect.appendChild(option);
             });
 
-            // Add explanation
-            const explanation = document.createElement('p');
-            explanation.style.fontStyle = 'italic';
-            explanation.style.margin = '10px 0';
-            explanation.textContent = '💡 Leave unchecked to keep contact unassigned (you can assign later)';
-            checkboxContainer.appendChild(explanation);
-
-            console.log(`🔄 Updated group checkboxes - now showing ${groups.length} groups`);
+            console.log(`🔄 Updated group multi-select - now showing ${groups.length} groups`);
         }
 
         function addContactWithGroups() {
@@ -250,13 +237,14 @@
             // Add the contact first
             const contactId = contactService.addContact(name, phone, email);
 
-            // Get selected groups
+            // Get selected groups from multi-select
             const selectedGroups = [];
-            const checkboxes = document.querySelectorAll('#group-checkboxes input[type="checkbox"]:checked');
+            const multiSelect = document.getElementById('group-multiselect');
+            const selectedOptions = Array.from(multiSelect.selectedOptions);
 
-            checkboxes.forEach(checkbox => {
-                const groupId = checkbox.value;
-                const groupName = checkbox.parentElement.textContent.trim();
+            selectedOptions.forEach(option => {
+                const groupId = option.value;
+                const groupName = option.textContent;
                 selectedGroups.push({ id: groupId, name: groupName });
 
                 // Assign contact to selected group
@@ -289,8 +277,8 @@
             document.getElementById('contact-phone').value = '';
             document.getElementById('contact-email').value = '';
 
-            // Uncheck all group checkboxes
-            document.querySelectorAll('#group-checkboxes input[type="checkbox"]').forEach(cb => cb.checked = false);
+            // Clear multi-select selections
+            document.getElementById('group-multiselect').selectedIndex = -1;
         }
 
         function addContact() {
