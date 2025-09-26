@@ -1,0 +1,19 @@
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Editor specific
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+tmp/
+temp/
+*.log
+
+# Note: This is a learning tutorial
+# We want to include all tutorial files
+# No build directories (no build process)
+# No node_modules (no npm dependencies)

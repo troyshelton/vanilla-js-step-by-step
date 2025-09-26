@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📱 Contact Manager - Complete App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .button-group {
+            margin: 10px 0;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .danger-btn {
+            background: #dc3545;
+        }
+
+        .danger-btn:hover {
+            background: #c82333;
+        }
+
+        .output {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+
+        .input-group {
+            margin: 10px 0;
+        }
+
+        input {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .stats {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+
+        .completion-banner {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="completion-banner">
+        <h1>🎉 Contact Manager - Complete Working App</h1>
+        <p>This is the finished version showing all concepts working together!</p>
+        <p><strong>📚 Use this as reference while building Steps 1-4</strong></p>
+    </div>
+
+    <div class="container">
+        <h2>📱 Contact Management</h2>
+
+        <div class="input-group">
+            <input type="text" id="contact-name" placeholder="Name" value="John Smith">
+            <input type="text" id="contact-phone" placeholder="Phone" value="555-0123">
+            <input type="text" id="contact-email" placeholder="Email" value="john@email.com">
+            <button onclick="addContact()">Add Contact</button>
+        </div>
+
+        <div class="button-group">
+            <button onclick="addSampleContacts()">Add Sample Data</button>
+            <button onclick="listAllContacts()">List All Contacts</button>
+            <button onclick="findContactDemo()">Find Contact Demo</button>
+        </div>
+        <div id="contact-output" class="output">Contact operations will appear here...</div>
+    </div>
+
+    <div class="container">
+        <h2>👥 Group Management</h2>
+
+        <div class="input-group">
+            <input type="text" id="group-name" placeholder="Group Name" value="Best Friends">
+            <select id="group-type">
+                <option value="family">Family</option>
+                <option value="friends" selected>Friends</option>
+                <option value="coworkers">Coworkers</option>
+            </select>
+            <button onclick="createGroup()">Create Group</button>
+        </div>
+
+        <div class="button-group">
+            <button onclick="createSampleGroups()">Create Sample Groups</button>
+            <button onclick="assignContactsToGroups()">Assign Contacts to Groups</button>
+            <button onclick="listAllGroups()">List All Groups</button>
+        </div>
+        <div id="group-output" class="output">Group operations will appear here...</div>
+    </div>
+
+    <div class="container">
+        <h2>🔍 Search & Reports</h2>
+
+        <div class="input-group">
+            <input type="text" id="search-term" placeholder="Search contacts..." value="john">
+            <button onclick="searchContacts()">Search Contacts</button>
+            <button onclick="searchGroups()">Search Groups</button>
+        </div>
+
+        <div class="button-group">
+            <button onclick="showFamilyContacts()">Show Family</button>
+            <button onclick="showFriendsContacts()">Show Friends</button>
+            <button onclick="showCoworkerContacts()">Show Coworkers</button>
+            <button onclick="generateStats()">Generate Statistics</button>
+        </div>
+        <div id="search-output" class="output">Search results will appear here...</div>
+    </div>
+
+    <div class="container">
+        <h2>🧪 Architecture Demonstration</h2>
+        <div class="button-group">
+            <button onclick="showGlobalServices()">Show Global Services</button>
+            <button onclick="demonstrateServiceCommunication()">Service Communication</button>
+            <button onclick="showLoadOrder()">Show Load Order</button>
+            <button class="danger-btn" onclick="clearAllData()">Clear All Data</button>
+        </div>
+        <div id="demo-output" class="output">Architecture demonstrations will appear here...</div>
+    </div>
+
+    <!--
+        CRITICAL: Load order matters!
+        SearchService depends on both ContactService and GroupService
+    -->
+    <script src="ContactService.js"></script>
+    <script src="GroupService.js"></script>
+    <script src="SearchService.js"></script>
+
+    <script>
+        // Global service instances
+        let contactService;
+        let groupService;
+        let searchService;
+
+        // Initialize services when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                contactService = new ContactService();
+                groupService = new GroupService();
+                searchService = SearchService.createWithGlobalServices();
+
+                console.log('🎉 All services initialized successfully!');
+                generateStats(); // Show initial stats
+            } catch (error) {
+                console.error('❌ Initialization failed:', error.message);
+            }
+        });
+
+        // === CONTACT MANAGEMENT FUNCTIONS ===
+
+        function addContact() {
+            const name = document.getElementById('contact-name').value;
+            const phone = document.getElementById('contact-phone').value;
+            const email = document.getElementById('contact-email').value;
+            const output = document.getElementById('contact-output');
+
+            if (name && phone && email) {
+                const contactId = contactService.addContact(name, phone, email);
+                output.textContent = `✅ Contact added: ${name}\nID: ${contactId}\nPhone: ${phone}\nEmail: ${email}`;
+
+                // Clear inputs
+                document.getElementById('contact-name').value = '';
+                document.getElementById('contact-phone').value = '';
+                document.getElementById('contact-email').value = '';
+            } else {
+                output.textContent = '❌ Please fill in all fields (name, phone, email)';
+            }
+        }
+
+        function addSampleContacts() {
+            const output = document.getElementById('contact-output');
+
+            contactService.addContact('John Smith', '555-0123', 'john@email.com');
+            contactService.addContact('Jane Doe', '555-0456', 'jane@email.com');
+            contactService.addContact('Bob Wilson', '555-0789', 'bob@work.com');
+            contactService.addContact('Alice Johnson', '555-0321', 'alice@family.com');
+            contactService.addContact('Charlie Brown', '555-0654', 'charlie@friends.com');
+
+            const count = contactService.getContactCount();
+            output.textContent = `✅ Added 5 sample contacts\nTotal contacts: ${count}`;
+        }
+
+        function listAllContacts() {
+            const output = document.getElementById('contact-output');
+            const contacts = contactService.getAllContacts();
+
+            output.textContent = `📱 All Contacts (${contacts.length}):\n\n`;
+            contacts.forEach((contact, index) => {
+                output.textContent += `${index + 1}. ${contact.name}\n`;
+                output.textContent += `   📞 ${contact.phone}\n`;
+                output.textContent += `   ✉️ ${contact.email}\n\n`;
+            });
+        }
+
+        function findContactDemo() {
+            const output = document.getElementById('contact-output');
+            const searchTerm = 'john';
+            const contact = contactService.findContact(searchTerm);
+
+            output.textContent = `🔍 Finding contact with name containing "${searchTerm}":\n\n`;
+            if (contact) {
+                output.textContent += `✅ Found: ${contact.name}\n`;
+                output.textContent += `📞 ${contact.phone}\n`;
+                output.textContent += `✉️ ${contact.email}`;
+            } else {
+                output.textContent += `❌ No contact found containing "${searchTerm}"`;
+            }
+        }
+
+        // === GROUP MANAGEMENT FUNCTIONS ===
+
+        function createGroup() {
+            const name = document.getElementById('group-name').value;
+            const type = document.getElementById('group-type').value;
+            const output = document.getElementById('group-output');
+
+            if (name) {
+                const groupId = groupService.createGroup(name, type);
+                output.textContent = `✅ Group created: "${name}" (${type})\nID: ${groupId}`;
+
+                // Clear input
+                document.getElementById('group-name').value = '';
+            } else {
+                output.textContent = '❌ Please enter a group name';
+            }
+        }
+
+        function createSampleGroups() {
+            const output = document.getElementById('group-output');
+
+            groupService.createGroup('Immediate Family', GroupService.TYPES.FAMILY);
+            groupService.createGroup('Close Friends', GroupService.TYPES.FRIENDS);
+            groupService.createGroup('Work Team', GroupService.TYPES.COWORKERS);
+
+            const count = groupService.getAllGroups().length;
+            output.textContent = `✅ Created 3 sample groups\nTotal groups: ${count}`;
+        }
+
+        function assignContactsToGroups() {
+            const output = document.getElementById('group-output');
+            const contacts = contactService.getAllContacts();
+            const groups = groupService.getAllGroups();
+
+            if (contacts.length === 0 || groups.length === 0) {
+                output.textContent = '❌ Need both contacts and groups first!\nTry "Add Sample Data" buttons.';
+                return;
+            }
+
+            // Assign contacts to groups based on email domain as example
+            contacts.forEach(contact => {
+                if (contact.email.includes('family.com')) {
+                    const familyGroup = groups.find(g => g.type === 'family');
+                    if (familyGroup) groupService.addContactToGroup(familyGroup.id, contact.id);
+                } else if (contact.email.includes('work.com')) {
+                    const workGroup = groups.find(g => g.type === 'coworkers');
+                    if (workGroup) groupService.addContactToGroup(workGroup.id, contact.id);
+                } else {
+                    const friendsGroup = groups.find(g => g.type === 'friends');
+                    if (friendsGroup) groupService.addContactToGroup(friendsGroup.id, contact.id);
+                }
+            });
+
+            output.textContent = '✅ Contacts assigned to groups based on email domains\nCheck "Generate Statistics" to see results';
+        }
+
+        function listAllGroups() {
+            const output = document.getElementById('group-output');
+            const groups = groupService.getAllGroups();
+
+            output.textContent = `👥 All Groups (${groups.length}):\n\n`;
+            groups.forEach((group, index) => {
+                output.textContent += `${index + 1}. ${group.name} (${group.type})\n`;
+                output.textContent += `   Members: ${group.contactIds.length}\n\n`;
+            });
+        }
+
+        // === SEARCH FUNCTIONS ===
+
+        function searchContacts() {
+            const searchTerm = document.getElementById('search-term').value;
+            const output = document.getElementById('search-output');
+
+            const results = searchService.searchContacts(searchTerm);
+
+            output.textContent = `🔍 Search results for "${searchTerm}":\n\n`;
+            if (results.length > 0) {
+                results.forEach((contact, index) => {
+                    output.textContent += `${index + 1}. ${contact.name} - ${contact.phone}\n`;
+                });
+            } else {
+                output.textContent += '❌ No contacts found';
+            }
+        }
+
+        function searchGroups() {
+            const searchTerm = document.getElementById('search-term').value;
+            const output = document.getElementById('search-output');
+
+            const results = searchService.searchGroups(searchTerm);
+
+            output.textContent = `🔍 Group search results for "${searchTerm}":\n\n`;
+            if (results.length > 0) {
+                results.forEach((group, index) => {
+                    output.textContent += `${index + 1}. ${group.name} (${group.type}) - ${group.contactIds.length} members\n`;
+                });
+            } else {
+                output.textContent += '❌ No groups found';
+            }
+        }
+
+        function showFamilyContacts() {
+            const output = document.getElementById('search-output');
+            const familyContacts = searchService.getContactsByGroupType('family');
+
+            output.textContent = `👨‍👩‍👧‍👦 Family Contacts (${familyContacts.length}):\n\n`;
+            familyContacts.forEach((contact, index) => {
+                output.textContent += `${index + 1}. ${contact.name} - ${contact.phone}\n`;
+            });
+        }
+
+        function showFriendsContacts() {
+            const output = document.getElementById('search-output');
+            const friendsContacts = searchService.getContactsByGroupType('friends');
+
+            output.textContent = `👫 Friends (${friendsContacts.length}):\n\n`;
+            friendsContacts.forEach((contact, index) => {
+                output.textContent += `${index + 1}. ${contact.name} - ${contact.phone}\n`;
+            });
+        }
+
+        function showCoworkerContacts() {
+            const output = document.getElementById('search-output');
+            const coworkerContacts = searchService.getContactsByGroupType('coworkers');
+
+            output.textContent = `💼 Coworkers (${coworkerContacts.length}):\n\n`;
+            coworkerContacts.forEach((contact, index) => {
+                output.textContent += `${index + 1}. ${contact.name} - ${contact.phone}\n`;
+            });
+        }
+
+        function generateStats() {
+            const output = document.getElementById('search-output');
+            const stats = searchService.getStats();
+
+            output.textContent = `📊 Contact Manager Statistics:\n\n`;
+            output.textContent += `Total Contacts: ${stats.totalContacts}\n`;
+            output.textContent += `Total Groups: ${stats.totalGroups}\n`;
+            output.textContent += `Average Contacts per Group: ${stats.averageContactsPerGroup}\n\n`;
+
+            output.textContent += `Group Breakdown:\n`;
+            Object.entries(stats.groupTypeBreakdown).forEach(([type, count]) => {
+                output.textContent += `- ${type}: ${count} groups\n`;
+            });
+        }
+
+        // === ARCHITECTURE DEMONSTRATION ===
+
+        function showGlobalServices() {
+            const output = document.getElementById('demo-output');
+            output.textContent = '';
+
+            output.textContent = `🌐 Global Services Available:\n\n`;
+            output.textContent += `✅ ContactService: ${typeof window.ContactService === 'function'}\n`;
+            output.textContent += `✅ GroupService: ${typeof window.GroupService === 'function'}\n`;
+            output.textContent += `✅ SearchService: ${typeof window.SearchService === 'function'}\n\n`;
+            output.textContent += `💡 Access them anywhere:\n`;
+            output.textContent += `- window.ContactService or just ContactService\n`;
+            output.textContent += `- window.GroupService or just GroupService\n`;
+            output.textContent += `- window.SearchService or just SearchService`;
+        }
+
+        function demonstrateServiceCommunication() {
+            const output = document.getElementById('demo-output');
+            output.textContent = '';
+
+            output.textContent = `🔗 Service Communication Demonstration:\n\n`;
+
+            // Show how SearchService uses both other services
+            output.textContent += `1. SearchService depends on:\n`;
+            output.textContent += `   - ContactService (for contact data)\n`;
+            output.textContent += `   - GroupService (for group data)\n\n`;
+
+            output.textContent += `2. When SearchService.createWithGlobalServices() is called:\n`;
+            output.textContent += `   - It checks if ContactService exists globally\n`;
+            output.textContent += `   - It checks if GroupService exists globally\n`;
+            output.textContent += `   - It creates instances of both\n`;
+            output.textContent += `   - It uses them to provide search functionality\n\n`;
+
+            output.textContent += `3. This is why load order matters:\n`;
+            output.textContent += `   ContactService.js → GroupService.js → SearchService.js`;
+        }
+
+        function showLoadOrder() {
+            const output = document.getElementById('demo-output');
+            output.textContent = '';
+
+            output.textContent = `📚 Script Load Order:\n\n`;
+            output.textContent += `✅ CORRECT Order (what we used):\n`;
+            output.textContent += `1. ContactService.js (no dependencies)\n`;
+            output.textContent += `2. GroupService.js (no dependencies)\n`;
+            output.textContent += `3. SearchService.js (uses both above)\n\n`;
+
+            output.textContent += `❌ WRONG Order (would cause errors):\n`;
+            output.textContent += `1. SearchService.js ← Error! Needs others first\n`;
+            output.textContent += `2. ContactService.js\n`;
+            output.textContent += `3. GroupService.js\n\n`;
+
+            output.textContent += `💡 Rule: Load dependencies BEFORE services that use them!`;
+        }
+
+        function clearAllData() {
+            // Create fresh instances to clear all data
+            contactService = new ContactService();
+            groupService = new GroupService();
+            searchService = SearchService.createWithGlobalServices();
+
+            // Clear all output areas
+            document.getElementById('contact-output').textContent = 'All data cleared!';
+            document.getElementById('group-output').textContent = 'All data cleared!';
+            document.getElementById('search-output').textContent = 'All data cleared!';
+            document.getElementById('demo-output').textContent = 'All data cleared!';
+
+            console.log('🗑️ All data cleared - fresh start!');
+        }
+
+        // Global debug function
+        window.debugContactManager = function() {
+            console.group('🔍 Contact Manager Debug Info');
+            console.log('ContactService instance:', contactService);
+            console.log('GroupService instance:', groupService);
+            console.log('SearchService instance:', searchService);
+            console.log('Total contacts:', contactService.getContactCount());
+            console.log('Total groups:', groupService.getAllGroups().length);
+            console.groupEnd();
+        };
+    </script>
+</body>
+</html>
