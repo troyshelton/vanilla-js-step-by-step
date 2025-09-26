@@ -89,9 +89,9 @@
 </head>
 <body>
     <div class="completion-banner">
-        <h1>🎉 Contact Manager - Complete Working App</h1>
-        <p>This is the finished version showing all concepts working together!</p>
-        <p><strong>📚 Use this as reference while building Steps 1-4</strong></p>
+        <h1>🎓 JavaScript Architecture Demo - Final Version</h1>
+        <p><strong>Learning Focus:</strong> See how IIFE, prototypes, and service dependencies work together</p>
+        <p>📚 Reference solution for Steps 1-4 | 🎯 Manually input data to learn concepts</p>
     </div>
 
     <div class="container">
@@ -105,7 +105,6 @@
         </div>
 
         <div class="button-group">
-            <button onclick="addSampleContacts()">Add Sample Data</button>
             <button onclick="listAllContacts()">List All Contacts</button>
             <button onclick="findContactDemo()">Find Contact Demo</button>
         </div>
@@ -126,9 +125,8 @@
         </div>
 
         <div class="button-group">
-            <button onclick="createSampleGroups()">Create Sample Groups</button>
-            <button onclick="assignContactsToGroups()">Assign Contacts to Groups</button>
             <button onclick="listAllGroups()">List All Groups</button>
+            <button onclick="manuallyAssignContact()">Assign Contact to Group</button>
         </div>
         <div id="group-output" class="output">Group operations will appear here...</div>
     </div>
@@ -144,27 +142,25 @@
 
         <div class="button-group">
             <button onclick="showAllContacts()">Show All Contacts</button>
-            <button onclick="showUnassignedContacts()">Show Unassigned</button>
-            <button onclick="showMultiGroupContacts()">Multiple Groups</button>
-        </div>
-        <div class="button-group">
             <button onclick="showFamilyContacts()">Show Family</button>
             <button onclick="showFriendsContacts()">Show Friends</button>
             <button onclick="showCoworkerContacts()">Show Coworkers</button>
-            <button onclick="generateStats()">Generate Statistics</button>
         </div>
         <div id="search-output" class="output">Search results will appear here...</div>
     </div>
 
     <div class="container">
-        <h2>🧪 Architecture Demonstration</h2>
+        <h2>🧪 JavaScript Architecture Learning</h2>
         <div class="button-group">
             <button onclick="showGlobalServices()">Show Global Services</button>
             <button onclick="demonstrateServiceCommunication()">Service Communication</button>
-            <button onclick="showLoadOrder()">Show Load Order</button>
+            <button onclick="showConsoleCommands()">Console Commands Guide</button>
             <button class="danger-btn" onclick="clearAllData()">Clear All Data</button>
         </div>
-        <div id="demo-output" class="output">Architecture demonstrations will appear here...</div>
+        <div id="demo-output" class="output">
+            🎯 Learning Focus: Manual interaction teaches JavaScript concepts better!<br><br>
+            💡 Try adding contacts and groups manually, then use console commands to see how services work together.
+        </div>
     </div>
 
     <!--
@@ -216,23 +212,37 @@
             }
         }
 
-        function addSampleContacts() {
-            const output = document.getElementById('contact-output');
+        function manuallyAssignContact() {
+            const output = document.getElementById('group-output');
+            const contacts = contactService.getAllContacts();
+            const groups = groupService.getAllGroups();
 
-            // Realistic contacts with normal email addresses
-            contactService.addContact('John Smith', '555-0123', 'john@email.com');
-            contactService.addContact('Sarah Johnson', '555-0456', 'sarah@email.com');  // Friend who becomes coworker
-            contactService.addContact('Mike Smith', '555-0789', 'mike@gmail.com');      // Brother (family + friend)
-            contactService.addContact('Dr. Lisa Chen', '555-0321', 'lisa@email.com');   // Family doctor (family + coworker)
-            contactService.addContact('Bob Wilson', '555-0654', 'bob@email.com');       // Just a coworker
+            if (contacts.length === 0) {
+                output.textContent = '❌ No contacts found!\nAdd contacts first using the Contact Management section.';
+                return;
+            }
 
-            const count = contactService.getContactCount();
-            output.textContent = `✅ Added 5 realistic contacts\nTotal contacts: ${count}\n\n`;
-            output.textContent += `👥 Realistic scenarios:\n`;
-            output.textContent += `- Sarah: Friend who became coworker\n`;
-            output.textContent += `- Mike: Brother (family + friend)\n`;
-            output.textContent += `- Dr. Chen: Family doctor (family + coworker)\n`;
-            output.textContent += `- Others: Single group assignments\n`;
+            if (groups.length === 0) {
+                output.textContent = '❌ No groups found!\nCreate groups first using the Group Management section.';
+                return;
+            }
+
+            // Simple manual assignment interface
+            output.textContent = '📝 Manual Assignment (Simple Demo):\n\n';
+            output.textContent += 'Available Contacts:\n';
+            contacts.forEach((contact, index) => {
+                output.textContent += `${index + 1}. ${contact.name} (ID: ${contact.id.substr(-5)})\n`;
+            });
+
+            output.textContent += '\nAvailable Groups:\n';
+            groups.forEach((group, index) => {
+                output.textContent += `${index + 1}. ${group.name} (${group.type})\n`;
+            });
+
+            output.textContent += '\n💡 Console Demo:\n';
+            output.textContent += 'Try in browser console (F12):\n';
+            output.textContent += `groupService.addContactToGroup('${groups[0]?.id}', '${contacts[0]?.id}');\n`;
+            output.textContent += 'This demonstrates how services communicate!';
         }
 
         function listAllContacts() {
@@ -280,83 +290,48 @@
             }
         }
 
-        function createSampleGroups() {
-            const output = document.getElementById('group-output');
 
-            groupService.createGroup('Immediate Family', GroupService.TYPES.FAMILY);
-            groupService.createGroup('Close Friends', GroupService.TYPES.FRIENDS);
-            groupService.createGroup('Work Team', GroupService.TYPES.COWORKERS);
-
-            const count = groupService.getAllGroups().length;
-            output.textContent = `✅ Created 3 sample groups\nTotal groups: ${count}`;
-        }
-
-        function assignContactsToGroups() {
+        function manuallyAssignContact() {
             const output = document.getElementById('group-output');
             const contacts = contactService.getAllContacts();
             const groups = groupService.getAllGroups();
 
-            // Check for existing contacts
             if (contacts.length === 0) {
-                output.textContent = '❌ No contacts found!\n\n';
-                output.textContent += '📋 Required Steps:\n';
-                output.textContent += '1. Go to "Contact Management" section\n';
-                output.textContent += '2. Click "Add Sample Contacts" button\n';
-                output.textContent += '3. Come back and try again\n\n';
-                output.textContent += '💡 This function only assigns EXISTING contacts to groups';
+                output.textContent = '❌ Add contacts first!\nUse Contact Management section to add contacts.';
                 return;
             }
 
-            // Check for existing groups
             if (groups.length === 0) {
-                output.textContent = '❌ No groups found!\n\n';
-                output.textContent += '📋 Required Steps:\n';
-                output.textContent += '1. Click "Create Sample Groups" button first\n';
-                output.textContent += '2. Then try assigning contacts to groups\n\n';
-                output.textContent += '💡 This function only assigns contacts to EXISTING groups';
+                output.textContent = '❌ Create groups first!\nUse Group Management section to create groups.';
                 return;
             }
 
-            // Realistic manual assignments (people can be in multiple groups)
-            const familyGroup = groups.find(g => g.type === 'family');
-            const friendsGroup = groups.find(g => g.type === 'friends');
-            const coworkersGroup = groups.find(g => g.type === 'coworkers');
+            // Simple manual assignment demo
+            output.textContent = '📝 Manual Assignment Demo:\n\n';
+            output.textContent += '🎯 Learning Goal: See how services communicate\n\n';
 
-            contacts.forEach(contact => {
-                // Realistic scenarios based on contact names
-                if (contact.name.includes('Sarah Johnson')) {
-                    // Sarah: Friend who became coworker
-                    groupService.addContactToGroup(friendsGroup.id, contact.id);
-                    groupService.addContactToGroup(coworkersGroup.id, contact.id);
-                } else if (contact.name.includes('Mike Smith')) {
-                    // Mike: Brother who's also a friend
-                    groupService.addContactToGroup(familyGroup.id, contact.id);
-                    groupService.addContactToGroup(friendsGroup.id, contact.id);
-                } else if (contact.name.includes('Dr. Lisa Chen')) {
-                    // Dr. Chen: Family doctor (family + professional relationship)
-                    groupService.addContactToGroup(familyGroup.id, contact.id);
-                    groupService.addContactToGroup(coworkersGroup.id, contact.id);
-                } else if (contact.name.includes('Bob Wilson')) {
-                    // Bob: Just a coworker
-                    groupService.addContactToGroup(coworkersGroup.id, contact.id);
-                } else {
-                    // John and others: Default to friends (but could be unassigned)
-                    groupService.addContactToGroup(friendsGroup.id, contact.id);
-                }
-            });
+            // Show first contact and first group as example
+            const firstContact = contacts[0];
+            const firstGroup = groups[0];
 
-            output.textContent = `✅ Successfully assigned ${contacts.length} existing contacts to groups!\n\n`;
-            output.textContent += '👥 Multiple Group Memberships Created:\n';
-            output.textContent += '• Sarah Johnson: Friends + Coworkers (friend who got hired)\n';
-            output.textContent += '• Mike Smith: Family + Friends (brother relationship)\n';
-            output.textContent += '• Dr. Lisa Chen: Family + Coworkers (family doctor)\n\n';
-            output.textContent += '👤 Single Group Memberships:\n';
-            output.textContent += '• Bob Wilson: Coworkers only\n';
-            output.textContent += '• John Smith: Friends only\n\n';
-            output.textContent += '🔍 Try these views:\n';
-            output.textContent += '• "Show All Contacts" - see everyone with group status\n';
-            output.textContent += '• "Multiple Groups" - see realistic overlapping relationships\n';
-            output.textContent += '• "Generate Statistics" - see assignment breakdown';
+            output.textContent += `Example Assignment:\n`;
+            output.textContent += `Contact: ${firstContact.name}\n`;
+            output.textContent += `Group: ${firstGroup.name}\n\n`;
+
+            // Perform the assignment
+            const success = groupService.addContactToGroup(firstGroup.id, firstContact.id);
+
+            if (success) {
+                output.textContent += `✅ Assigned ${firstContact.name} to ${firstGroup.name}\n\n`;
+                output.textContent += '🔍 This demonstrates:\n';
+                output.textContent += '• GroupService using ContactService data\n';
+                output.textContent += '• Services communicating through method calls\n';
+                output.textContent += '• Global namespace allowing service access\n\n';
+                output.textContent += '💡 Try "Show Family/Friends/Coworkers" to see the result!';
+            } else {
+                output.textContent += '⚠️ Assignment may have already existed\n';
+                output.textContent += 'This shows duplicate prevention in the service!';
+            }
         }
 
         function listAllGroups() {
@@ -368,6 +343,10 @@
                 output.textContent += `${index + 1}. ${group.name} (${group.type})\n`;
                 output.textContent += `   Members: ${group.contactIds.length}\n\n`;
             });
+
+            if (groups.length === 0) {
+                output.textContent += '💡 Create groups using the input above!';
+            }
         }
 
         // === SEARCH FUNCTIONS ===
@@ -436,73 +415,25 @@
 
         function showAllContacts() {
             const output = document.getElementById('search-output');
-            const allContactsWithGroups = searchService.getAllContactsWithGroupInfo();
+            const contacts = searchService.getAllContacts();
 
-            output.textContent = `📱 All Contacts (${allContactsWithGroups.length}):\n\n`;
-            allContactsWithGroups.forEach((item, index) => {
-                const groupNames = item.groups.map(g => g.name).join(', ');
-                const groupStatus = item.isUnassigned ? '(Unassigned)' :
-                                   item.isInMultipleGroups ? '(Multiple Groups)' :
-                                   `(${groupNames})`;
-
-                output.textContent += `${index + 1}. ${item.contact.name} - ${item.contact.phone}\n`;
-                output.textContent += `   Groups: ${groupStatus}\n\n`;
-            });
-        }
-
-        function showUnassignedContacts() {
-            const output = document.getElementById('search-output');
-            const unassignedContacts = searchService.getUnassignedContacts();
-
-            output.textContent = `📋 Unassigned Contacts (${unassignedContacts.length}):\n\n`;
-            if (unassignedContacts.length > 0) {
-                unassignedContacts.forEach((contact, index) => {
-                    output.textContent += `${index + 1}. ${contact.name} - ${contact.phone}\n`;
-                    output.textContent += `   📧 ${contact.email}\n`;
-                    output.textContent += `   💡 Not assigned to any groups yet\n\n`;
-                });
-            } else {
-                output.textContent += `✅ All contacts are assigned to groups!`;
+            output.textContent = `📱 All Contacts (${contacts.length}):\n\n`;
+            if (contacts.length === 0) {
+                output.textContent += '💡 Add contacts using Contact Management section';
+                return;
             }
-        }
 
-        function showMultiGroupContacts() {
-            const output = document.getElementById('search-output');
-            const multiGroupContacts = searchService.getMultiGroupContacts();
-
-            output.textContent = `👥 Contacts in Multiple Groups (${multiGroupContacts.length}):\n\n`;
-            multiGroupContacts.forEach((item, index) => {
-                const groupNames = item.groups.map(g => g.name).join(', ');
-                output.textContent += `${index + 1}. ${item.contact.name} - ${item.contact.phone}\n`;
-                output.textContent += `   Groups: ${groupNames}\n`;
-                output.textContent += `   💡 Shows realistic overlapping relationships\n\n`;
-            });
-        }
-
-        function generateStats() {
-            const output = document.getElementById('search-output');
-            const stats = searchService.getStats();
-
-            output.textContent = `📊 Contact Manager Statistics:\n\n`;
-            output.textContent += `📱 Contacts Overview:\n`;
-            output.textContent += `Total Contacts: ${stats.totalContacts}\n`;
-            output.textContent += `Assigned to Groups: ${stats.assignedContacts}\n`;
-            output.textContent += `Unassigned: ${stats.unassignedContacts}\n`;
-            output.textContent += `In Multiple Groups: ${stats.multiGroupContacts}\n\n`;
-
-            output.textContent += `👥 Groups Overview:\n`;
-            output.textContent += `Total Groups: ${stats.totalGroups}\n`;
-            output.textContent += `Average Contacts per Group: ${stats.averageContactsPerGroup}\n\n`;
-
-            output.textContent += `📋 Contacts by Group Type:\n`;
-            Object.entries(stats.contactsPerGroupType).forEach(([type, count]) => {
-                output.textContent += `• ${type.charAt(0).toUpperCase() + type.slice(1)}: ${count} contacts\n`;
+            contacts.forEach((contact, index) => {
+                output.textContent += `${index + 1}. ${contact.name} - ${contact.phone}\n`;
+                output.textContent += `   📧 ${contact.email}\n\n`;
             });
 
-            if (stats.unassignedContacts > 0) {
-                output.textContent += `\n💡 Tip: Use "Show Unassigned" to see contacts not in any groups`;
-            }
+            output.textContent += '🔍 This demonstrates:\n';
+            output.textContent += '• SearchService accessing ContactService data\n';
+            output.textContent += '• Service method calls: searchService.getAllContacts()\n';
+            output.textContent += '• Cross-service communication through global namespace';
         }
+
 
         // === ARCHITECTURE DEMONSTRATION ===
 
@@ -541,22 +472,39 @@
             output.textContent += `   ContactService.js → GroupService.js → SearchService.js`;
         }
 
-        function showLoadOrder() {
+        function showConsoleCommands() {
             const output = document.getElementById('demo-output');
             output.textContent = '';
 
-            output.textContent = `📚 Script Load Order:\n\n`;
-            output.textContent += `✅ CORRECT Order (what we used):\n`;
-            output.textContent += `1. ContactService.js (no dependencies)\n`;
-            output.textContent += `2. GroupService.js (no dependencies)\n`;
-            output.textContent += `3. SearchService.js (uses both above)\n\n`;
+            output.textContent = '💻 Console Commands for Learning:\n\n';
+            output.textContent += '🎯 Open browser console (F12) and try these:\n\n';
 
-            output.textContent += `❌ WRONG Order (would cause errors):\n`;
-            output.textContent += `1. SearchService.js ← Error! Needs others first\n`;
-            output.textContent += `2. ContactService.js\n`;
-            output.textContent += `3. GroupService.js\n\n`;
+            output.textContent += '📱 Manual Contact Management:\n';
+            output.textContent += `contactService.addContact('Your Name', '555-1234', 'you@email.com');\n`;
+            output.textContent += `contactService.findContact('your');\n`;
+            output.textContent += `contactService.getAllContacts();\n\n`;
 
-            output.textContent += `💡 Rule: Load dependencies BEFORE services that use them!`;
+            output.textContent += '👥 Manual Group Management:\n';
+            output.textContent += `groupService.createGroup('My Friends', 'friends');\n`;
+            output.textContent += `groupService.getAllGroups();\n\n`;
+
+            output.textContent += '🔗 Manual Assignment (Service Communication):\n';
+            output.textContent += '// Get contact and group IDs from lists above, then:\n';
+            output.textContent += `groupService.addContactToGroup(groupId, contactId);\n\n`;
+
+            output.textContent += '🔍 Cross-Service Search:\n';
+            output.textContent += `searchService.searchContacts('name');\n`;
+            output.textContent += `searchService.getContactsByGroupType('friends');\n\n`;
+
+            output.textContent += '🌐 Test Global Namespace:\n';
+            output.textContent += `console.log(typeof ContactService);  // "function"\n`;
+            output.textContent += `const newInstance = new ContactService();  // Independent data\n\n`;
+
+            output.textContent += '💡 This manual approach teaches:\n';
+            output.textContent += '• IIFE pattern (global exposure)\n';
+            output.textContent += '• Prototype method sharing\n';
+            output.textContent += '• Service dependencies\n';
+            output.textContent += '• Instance data separation';
         }
 
         function clearAllData() {
