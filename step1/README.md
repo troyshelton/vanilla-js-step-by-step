@@ -2,19 +2,35 @@
 
 ## 🎯 What You'll Learn
 - **IIFE pattern** - Keep code private while exposing services
-- **Prototype pattern** - Share methods between instances
+- **Prototype pattern** - Share methods between instances efficiently
 - **Global namespace** - How services become available everywhere
+- **Instance data** - Each service instance has its own data
 
 ## 🛠️ What You'll Build
-A ContactService that can:
+A simple ContactService with clean manual input:
 - ✅ Add contacts (name, phone, email)
-- ✅ Find contacts by name
-- ✅ List all contacts
+- ✅ Show all contacts
+- ✅ Search contacts
+- ✅ Clear all contacts
 
-## 📋 Build Instructions
+## 📋 Files in This Step
+- **ContactService.js** - Complete working service (reference)
+- **index.html** - Working interface to test the service
+- **README.md** - This guide with learning objectives
+
+## 🚀 How to Use This Step
+
+### Option 1: Study the Working Code
+1. **Open index.html** in your browser
+2. **Try the interface** - Add contacts manually
+3. **Study ContactService.js** - See how IIFE and prototype work
+4. **Open browser console** (F12) - See service logging
+
+### Option 2: Build It Yourself
+If you want to code it from scratch, follow this template:
 
 ### 1. Create ContactService.js
-**Fill in the TODOs in this template:**
+**Basic structure:**
 
 ```javascript
 // ContactService.js

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step 1: Basic ContactService</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .button-group {
+            margin: 10px 0;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .danger-btn {
+            background: #dc3545;
+        }
+
+        .danger-btn:hover {
+            background: #c82333;
+        }
+
+        .output {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+
+        .input-group {
+            margin: 10px 0;
+        }
+
+        input {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .step-banner {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="step-banner">
+        <h1>📝 Step 1: Build Your First ContactService</h1>
+        <p><strong>Learning Goal:</strong> IIFE pattern, prototype methods, and global namespace</p>
+        <p>🎯 Add contacts manually and see how services work</p>
+    </div>
+
+    <div class="container">
+        <h2>📱 Contact Management</h2>
+
+        <div class="input-group" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <input type="text" id="contact-name" placeholder="Name" style="flex: 1; min-width: 150px;">
+            <input type="text" id="contact-phone" placeholder="Phone" style="flex: 1; min-width: 120px;">
+            <input type="text" id="contact-email" placeholder="Email" style="flex: 1; min-width: 180px;">
+            <button onclick="addContact()">Add Contact</button>
+        </div>
+
+        <div class="button-group">
+            <button onclick="showAllContacts()">Show All Contacts</button>
+            <button onclick="searchContactDemo()">Search Contact Demo</button>
+            <button class="danger-btn" onclick="clearContacts()">Clear All</button>
+        </div>
+
+        <div id="contact-output" class="output">Add a contact to get started!</div>
+    </div>
+
+    <div class="container">
+        <h2>🎓 What You're Learning</h2>
+        <div id="learning-output" class="output">
+🔍 Step 1 Learning Objectives:
+
+• IIFE Pattern: (function(window) { ... })(window)
+  - Keeps code private while exposing ContactService globally
+
+• Prototype Pattern: ContactService.prototype.addContact = function() {...}
+  - Methods are shared across all instances (memory efficient)
+
+• Global Namespace: window.ContactService = ContactService
+  - Service is available everywhere in your application
+
+• Instance Data: Each ContactService instance has its own contacts array
+  - Multiple instances = separate data storage
+
+💡 Open browser console (F12) and try:
+• console.log(typeof ContactService);  // "function"
+• const service2 = new ContactService();  // Create another instance
+• service2.addContact('Test', '123', 'test@email.com');
+• console.log(contactService.getAllContacts().length);  // Your contacts
+• console.log(service2.getAllContacts().length);  // Test contact (separate!)
+        </div>
+    </div>
+
+    <!-- Load ContactService -->
+    <script src="ContactService.js"></script>
+
+    <script>
+        // Global service instance
+        let contactService;
+
+        // Initialize service when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            contactService = new ContactService();
+            console.log('✅ Step 1: ContactService initialized');
+            console.log('🎯 Try adding contacts manually to learn how the service works!');
+        });
+
+        function addContact() {
+            const name = document.getElementById('contact-name').value.trim();
+            const phone = document.getElementById('contact-phone').value.trim();
+            const email = document.getElementById('contact-email').value.trim();
+            const output = document.getElementById('contact-output');
+
+            if (!name || !phone || !email) {
+                output.textContent = '❌ Please fill in all fields (name, phone, email)';
+                return;
+            }
+
+            // Add the contact
+            const contactId = contactService.addContact(name, phone, email);
+
+            // Show results with learning concepts
+            output.textContent = `✅ Contact added: ${name}\n`;
+            output.textContent += `📧 ${email} | 📞 ${phone}\n`;
+            output.textContent += `ID: ${contactId}\n\n`;
+            output.textContent += `🔍 What just happened:\n`;
+            output.textContent += `• ContactService.addContact() method was called\n`;
+            output.textContent += `• Contact object was created and stored in this.contacts array\n`;
+            output.textContent += `• Unique ID was generated using private helper function\n`;
+            output.textContent += `• Console shows logging from the service\n\n`;
+            output.textContent += `💡 Total contacts: ${contactService.getContactCount()}`;
+
+            // Clear form
+            document.getElementById('contact-name').value = '';
+            document.getElementById('contact-phone').value = '';
+            document.getElementById('contact-email').value = '';
+        }
+
+        function showAllContacts() {
+            const output = document.getElementById('contact-output');
+            const contacts = contactService.getAllContacts();
+
+            if (contacts.length === 0) {
+                output.textContent = '📱 No contacts yet!\n\n💡 Add contacts using the form above.';
+                return;
+            }
+
+            output.textContent = `📱 All Contacts (${contacts.length}):\n\n`;
+            contacts.forEach((contact, index) => {
+                output.textContent += `${index + 1}. ${contact.name} - ${contact.phone}\n`;
+                output.textContent += `   📧 ${contact.email}\n\n`;
+            });
+
+            output.textContent += `🔍 What this demonstrates:\n`;
+            output.textContent += `• ContactService stores data in instance (this.contacts)\n`;
+            output.textContent += `• getAllContacts() method returns array of contact objects\n`;
+            output.textContent += `• Each instance maintains its own separate data`;
+        }
+
+        function searchContactDemo() {
+            const output = document.getElementById('contact-output');
+            const contacts = contactService.getAllContacts();
+
+            if (contacts.length === 0) {
+                output.textContent = '❌ Add contacts first to test search functionality';
+                return;
+            }
+
+            // Use first contact for demo
+            const searchTerm = contacts[0].name.split(' ')[0].toLowerCase();
+            const found = contactService.findContact(searchTerm);
+
+            output.textContent = `🔍 Searching for "${searchTerm}":\n\n`;
+            if (found) {
+                output.textContent += `✅ Found: ${found.name}\n`;
+                output.textContent += `📞 ${found.phone}\n`;
+                output.textContent += `📧 ${found.email}\n\n`;
+                output.textContent += `🔍 What this demonstrates:\n`;
+                output.textContent += `• findContact() method searches this.contacts array\n`;
+                output.textContent += `• Case-insensitive search using toLowerCase()\n`;
+                output.textContent += `• Returns contact object or null if not found`;
+            }
+        }
+
+        function clearContacts() {
+            contactService = new ContactService();
+            document.getElementById('contact-output').textContent = '🗑️ All contacts cleared!\n\n💡 Fresh ContactService instance created.';
+            console.log('🔄 ContactService reset - new instance created');
+        }
+    </script>
+</body>
+</html>
