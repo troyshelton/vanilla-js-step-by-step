@@ -326,7 +326,7 @@
 
             if (name) {
                 // Use the group name as its own type (no artificial categorization)
-                const groupId = groupService.createGroup(name, name.toLowerCase());
+                const groupId = groupService.createGroup(name);
                 output.textContent = `✅ Group created: "${name}"\nID: ${groupId}\n\n`;
 
                 // DYNAMIC UPDATE: Refresh checkboxes in contact section

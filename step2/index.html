@@ -232,7 +232,7 @@
                 return;
             }
 
-            const groupId = groupService.createGroup(name, name.toLowerCase());
+            const groupId = groupService.createGroup(name);
 
             // DYNAMIC UPDATE: Refresh multi-select in contact section
             updateGroupMultiSelect();

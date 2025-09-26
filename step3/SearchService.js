@@ -43,27 +43,26 @@
         const term = searchTerm.toLowerCase();
 
         return allGroups.filter(group =>
-            group.name.toLowerCase().includes(term) ||
-            group.type.toLowerCase().includes(term)
+            group.name.toLowerCase().includes(term)
         );
     };
 
-    // Find contacts in a specific group type (family, friends, coworkers)
-    SearchService.prototype.getContactsByGroupType = function(groupType) {
-        const groups = this.groupService.getGroupsByType(groupType);
-        const allContacts = this.contactService.getAllContacts();
-        const contactsInType = [];
+    // Find contacts in a specific group by name
+    SearchService.prototype.getContactsByGroupName = function(groupName) {
+        const group = this.groupService.findGroup(groupName);
+        if (!group) return [];
 
-        groups.forEach(group => {
-            group.contactIds.forEach(contactId => {
-                const contact = allContacts.find(c => c.id === contactId);
-                if (contact && !contactsInType.some(c => c.id === contact.id)) {
-                    contactsInType.push(contact);
-                }
-            });
+        const allContacts = this.contactService.getAllContacts();
+        const contactsInGroup = [];
+
+        group.contactIds.forEach(contactId => {
+            const contact = allContacts.find(c => c.id === contactId);
+            if (contact) {
+                contactsInGroup.push(contact);
+            }
         });
 
-        return contactsInType;
+        return contactsInGroup;
     };
 
     // Advanced search - contacts AND their groups
@@ -112,17 +111,7 @@
         const unassignedCount = this.getUnassignedContacts().length;
         const multiGroupCount = this.getMultiGroupContacts().length;
 
-        const groupTypes = this.groupService.getAllGroups().reduce((types, group) => {
-            types[group.type] = (types[group.type] || 0) + 1;
-            return types;
-        }, {});
-
-        // Calculate contacts per group type
-        const contactsPerGroupType = {};
-        Object.keys(this.groupService.constructor.TYPES).forEach(type => {
-            const contacts = this.getContactsByGroupType(this.groupService.constructor.TYPES[type]);
-            contactsPerGroupType[type.toLowerCase()] = contacts.length;
-        });
+        const groups = this.groupService.getAllGroups();
 
         return {
             totalContacts: totalContacts,
@@ -130,8 +119,6 @@
             unassignedContacts: unassignedCount,
             multiGroupContacts: multiGroupCount,
             assignedContacts: totalContacts - unassignedCount,
-            groupTypeBreakdown: groupTypes,
-            contactsPerGroupType: contactsPerGroupType,
             averageContactsPerGroup: totalGroups > 0 ? Math.round(totalContacts / totalGroups * 10) / 10 : 0
         };
     };

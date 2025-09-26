@@ -15,17 +15,16 @@
     }
 
     // Create a new group
-    GroupService.prototype.createGroup = function(name, type) {
+    GroupService.prototype.createGroup = function(name) {
         const group = {
             id: generateGroupId(),
             name: name,
-            type: type || 'general',
             contactIds: [],
             dateCreated: new Date()
         };
 
         this.groups.push(group);
-        console.log(`👥 Group created: "${name}" (${type})`);
+        console.log(`👥 Group created: "${name}"`);
         return group.id;
     };
 
@@ -57,11 +56,6 @@
     // Get all groups
     GroupService.prototype.getAllGroups = function() {
         return this.groups.slice();
-    };
-
-    // Get groups by type
-    GroupService.prototype.getGroupsByType = function(type) {
-        return this.groups.filter(group => group.type === type);
     };
 
     // Find group by name
