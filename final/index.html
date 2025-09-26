@@ -96,9 +96,6 @@
 
     <div class="container">
         <h2>📱 Contact Management</h2>
-        <p style="margin: 10px 0; color: #666;">
-            💡 <strong>Groups Multi-Select:</strong> Ctrl+Click (PC) or Cmd+Click (Mac) to select multiple groups, or leave empty for unassigned contact
-        </p>
 
         <div class="input-group" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
             <input type="text" id="contact-name" placeholder="Name" value="John Smith" style="flex: 1; min-width: 150px;">
@@ -113,9 +110,6 @@
             <button onclick="addContactWithGroups()" style="white-space: nowrap;">Add Contact</button>
         </div>
 
-        <div class="button-group">
-            <button onclick="listAllContacts()">List All Contacts</button>
-        </div>
         <div id="contact-output" class="output">Contact operations will appear here...</div>
     </div>
 
@@ -336,17 +330,6 @@
             output.textContent += 'This demonstrates how services communicate!';
         }
 
-        function listAllContacts() {
-            const output = document.getElementById('contact-output');
-            const contacts = contactService.getAllContacts();
-
-            output.textContent = `📱 All Contacts (${contacts.length}):\n\n`;
-            contacts.forEach((contact, index) => {
-                output.textContent += `${index + 1}. ${contact.name}\n`;
-                output.textContent += `   📞 ${contact.phone}\n`;
-                output.textContent += `   ✉️ ${contact.email}\n\n`;
-            });
-        }
 
 
         // === GROUP MANAGEMENT FUNCTIONS ===
