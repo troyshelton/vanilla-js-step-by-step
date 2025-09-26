@@ -116,13 +116,13 @@
     <div class="container">
         <h2>👥 Group Management</h2>
 
-        <div class="input-group">
-            <input type="text" id="group-name" placeholder="Group Name (e.g., Family, Church, Fishing Buddies)" value="">
+        <div class="input-group" style="display: flex; align-items: center; gap: 10px;">
+            <input type="text" id="group-name" placeholder="Group Name" value="" style="flex: 1;">
             <button onclick="createGroup()">Create Group</button>
+            <span style="font-style: italic; color: #666; font-size: 14px;">
+                💡 Examples: Family, Church, Fishing, Book Club, etc.
+            </span>
         </div>
-        <p style="margin: 10px 0; font-style: italic; color: #666;">
-            💡 Create any type of group: Family, Friends, Coworkers, Church, Fishing, Book Club, etc.
-        </p>
 
         <div id="group-output" class="output">Group operations will appear here...</div>
     </div>
