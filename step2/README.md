@@ -133,8 +133,15 @@ cp ../step1/ContactService.js .
         }
 
         function assignContactsToGroups() {
-            // TODO: Assign contacts to groups
+            // TODO: Assign contacts to groups realistically
+            // Examples:
+            // - Someone can be in Friends AND Coworkers (friend who got hired)
+            // - Family member can also be in Friends
+            // - Use contact names to determine realistic assignments
+            // - Don't rely on email domains (unrealistic)
+
             // Get contact IDs and group IDs, then use addContactToGroup()
+            // Remember: One contact can be in multiple groups!
         }
 
         function listGroups() {

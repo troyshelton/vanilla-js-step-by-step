@@ -77,22 +77,55 @@
         );
     };
 
-    // Get contacts in a specific group (requires ContactService)
-    GroupService.prototype.getContactsInGroup = function(groupId) {
-        // Check if ContactService is available
-        if (typeof window.ContactService === 'undefined') {
-            console.error('❌ ContactService not available! Load ContactService.js first.');
-            return [];
-        }
-
+    // Get contacts in a specific group (requires ContactService instance)
+    GroupService.prototype.getContactsInGroup = function(groupId, contactServiceInstance) {
         const group = this.groups.find(g => g.id === groupId);
-        if (!group) return [];
+        if (!group || !contactServiceInstance) return [];
 
-        // Create a ContactService instance to get contact details
-        const contactService = new window.ContactService();
+        // Use the provided ContactService instance (with actual data)
+        const allContacts = contactServiceInstance.getAllContacts();
         return group.contactIds.map(contactId => {
-            return contactService.getAllContacts().find(contact => contact.id === contactId);
+            return allContacts.find(contact => contact.id === contactId);
         }).filter(contact => contact !== undefined);
+    };
+
+    // Get contacts that are NOT assigned to any groups
+    GroupService.prototype.getUnassignedContacts = function(contactServiceInstance) {
+        if (!contactServiceInstance) return [];
+
+        const allContacts = contactServiceInstance.getAllContacts();
+        const assignedContactIds = new Set();
+
+        // Collect all contact IDs that are in groups
+        this.groups.forEach(group => {
+            group.contactIds.forEach(contactId => {
+                assignedContactIds.add(contactId);
+            });
+        });
+
+        // Return contacts that are NOT in any group
+        return allContacts.filter(contact => !assignedContactIds.has(contact.id));
+    };
+
+    // Get all contacts with their group memberships
+    GroupService.prototype.getAllContactsWithGroups = function(contactServiceInstance) {
+        if (!contactServiceInstance) return [];
+
+        const allContacts = contactServiceInstance.getAllContacts();
+
+        return allContacts.map(contact => {
+            // Find all groups this contact belongs to
+            const memberOfGroups = this.groups.filter(group =>
+                group.contactIds.includes(contact.id)
+            );
+
+            return {
+                contact: contact,
+                groups: memberOfGroups,
+                isUnassigned: memberOfGroups.length === 0,
+                isInMultipleGroups: memberOfGroups.length > 1
+            };
+        });
     };
 
     // Expose constants

@@ -84,19 +84,54 @@
         });
     };
 
+    // Get all contacts regardless of group membership
+    SearchService.prototype.getAllContacts = function() {
+        return this.contactService.getAllContacts();
+    };
+
+    // Get contacts that are not assigned to any groups
+    SearchService.prototype.getUnassignedContacts = function() {
+        return this.groupService.getUnassignedContacts(this.contactService);
+    };
+
+    // Get contacts that belong to multiple groups
+    SearchService.prototype.getMultiGroupContacts = function() {
+        const contactsWithGroups = this.groupService.getAllContactsWithGroups(this.contactService);
+        return contactsWithGroups.filter(item => item.isInMultipleGroups);
+    };
+
+    // Get all contacts with their group information
+    SearchService.prototype.getAllContactsWithGroupInfo = function() {
+        return this.groupService.getAllContactsWithGroups(this.contactService);
+    };
+
     // Get statistics about contacts and groups
     SearchService.prototype.getStats = function() {
         const totalContacts = this.contactService.getContactCount();
         const totalGroups = this.groupService.getAllGroups().length;
+        const unassignedCount = this.getUnassignedContacts().length;
+        const multiGroupCount = this.getMultiGroupContacts().length;
+
         const groupTypes = this.groupService.getAllGroups().reduce((types, group) => {
             types[group.type] = (types[group.type] || 0) + 1;
             return types;
         }, {});
 
+        // Calculate contacts per group type
+        const contactsPerGroupType = {};
+        Object.keys(this.groupService.constructor.TYPES).forEach(type => {
+            const contacts = this.getContactsByGroupType(this.groupService.constructor.TYPES[type]);
+            contactsPerGroupType[type.toLowerCase()] = contacts.length;
+        });
+
         return {
             totalContacts: totalContacts,
             totalGroups: totalGroups,
+            unassignedContacts: unassignedCount,
+            multiGroupContacts: multiGroupCount,
+            assignedContacts: totalContacts - unassignedCount,
             groupTypeBreakdown: groupTypes,
+            contactsPerGroupType: contactsPerGroupType,
             averageContactsPerGroup: totalGroups > 0 ? Math.round(totalContacts / totalGroups * 10) / 10 : 0
         };
     };

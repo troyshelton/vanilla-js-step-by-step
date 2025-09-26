@@ -143,6 +143,11 @@
         </div>
 
         <div class="button-group">
+            <button onclick="showAllContacts()">Show All Contacts</button>
+            <button onclick="showUnassignedContacts()">Show Unassigned</button>
+            <button onclick="showMultiGroupContacts()">Multiple Groups</button>
+        </div>
+        <div class="button-group">
             <button onclick="showFamilyContacts()">Show Family</button>
             <button onclick="showFriendsContacts()">Show Friends</button>
             <button onclick="showCoworkerContacts()">Show Coworkers</button>
@@ -214,14 +219,20 @@
         function addSampleContacts() {
             const output = document.getElementById('contact-output');
 
+            // Realistic contacts with normal email addresses
             contactService.addContact('John Smith', '555-0123', 'john@email.com');
-            contactService.addContact('Jane Doe', '555-0456', 'jane@email.com');
-            contactService.addContact('Bob Wilson', '555-0789', 'bob@work.com');
-            contactService.addContact('Alice Johnson', '555-0321', 'alice@family.com');
-            contactService.addContact('Charlie Brown', '555-0654', 'charlie@friends.com');
+            contactService.addContact('Sarah Johnson', '555-0456', 'sarah@email.com');  // Friend who becomes coworker
+            contactService.addContact('Mike Smith', '555-0789', 'mike@gmail.com');      // Brother (family + friend)
+            contactService.addContact('Dr. Lisa Chen', '555-0321', 'lisa@email.com');   // Family doctor (family + coworker)
+            contactService.addContact('Bob Wilson', '555-0654', 'bob@email.com');       // Just a coworker
 
             const count = contactService.getContactCount();
-            output.textContent = `✅ Added 5 sample contacts\nTotal contacts: ${count}`;
+            output.textContent = `✅ Added 5 realistic contacts\nTotal contacts: ${count}\n\n`;
+            output.textContent += `👥 Realistic scenarios:\n`;
+            output.textContent += `- Sarah: Friend who became coworker\n`;
+            output.textContent += `- Mike: Brother (family + friend)\n`;
+            output.textContent += `- Dr. Chen: Family doctor (family + coworker)\n`;
+            output.textContent += `- Others: Single group assignments\n`;
         }
 
         function listAllContacts() {
@@ -290,21 +301,43 @@
                 return;
             }
 
-            // Assign contacts to groups based on email domain as example
+            // Realistic manual assignments (people can be in multiple groups)
+            const familyGroup = groups.find(g => g.type === 'family');
+            const friendsGroup = groups.find(g => g.type === 'friends');
+            const coworkersGroup = groups.find(g => g.type === 'coworkers');
+
             contacts.forEach(contact => {
-                if (contact.email.includes('family.com')) {
-                    const familyGroup = groups.find(g => g.type === 'family');
-                    if (familyGroup) groupService.addContactToGroup(familyGroup.id, contact.id);
-                } else if (contact.email.includes('work.com')) {
-                    const workGroup = groups.find(g => g.type === 'coworkers');
-                    if (workGroup) groupService.addContactToGroup(workGroup.id, contact.id);
+                // Realistic scenarios based on contact names
+                if (contact.name.includes('Sarah Johnson')) {
+                    // Sarah: Friend who became coworker
+                    groupService.addContactToGroup(friendsGroup.id, contact.id);
+                    groupService.addContactToGroup(coworkersGroup.id, contact.id);
+                } else if (contact.name.includes('Mike Smith')) {
+                    // Mike: Brother who's also a friend
+                    groupService.addContactToGroup(familyGroup.id, contact.id);
+                    groupService.addContactToGroup(friendsGroup.id, contact.id);
+                } else if (contact.name.includes('Dr. Lisa Chen')) {
+                    // Dr. Chen: Family doctor (family + professional relationship)
+                    groupService.addContactToGroup(familyGroup.id, contact.id);
+                    groupService.addContactToGroup(coworkersGroup.id, contact.id);
+                } else if (contact.name.includes('Bob Wilson')) {
+                    // Bob: Just a coworker
+                    groupService.addContactToGroup(coworkersGroup.id, contact.id);
                 } else {
-                    const friendsGroup = groups.find(g => g.type === 'friends');
-                    if (friendsGroup) groupService.addContactToGroup(friendsGroup.id, contact.id);
+                    // John and others: Default to friends (but could be unassigned)
+                    groupService.addContactToGroup(friendsGroup.id, contact.id);
                 }
             });
 
-            output.textContent = '✅ Contacts assigned to groups based on email domains\nCheck "Generate Statistics" to see results';
+            output.textContent = '✅ Contacts assigned realistically:\n\n';
+            output.textContent += '👥 Multiple Group Memberships:\n';
+            output.textContent += '• Sarah: Friends + Coworkers\n';
+            output.textContent += '• Mike: Family + Friends\n';
+            output.textContent += '• Dr. Chen: Family + Coworkers\n\n';
+            output.textContent += '👤 Single Group Memberships:\n';
+            output.textContent += '• Bob: Coworkers only\n';
+            output.textContent += '• John: Friends only\n\n';
+            output.textContent += '📊 Check "Generate Statistics" to see results!';
         }
 
         function listAllGroups() {
@@ -382,19 +415,74 @@
             });
         }
 
+        function showAllContacts() {
+            const output = document.getElementById('search-output');
+            const allContactsWithGroups = searchService.getAllContactsWithGroupInfo();
+
+            output.textContent = `📱 All Contacts (${allContactsWithGroups.length}):\n\n`;
+            allContactsWithGroups.forEach((item, index) => {
+                const groupNames = item.groups.map(g => g.name).join(', ');
+                const groupStatus = item.isUnassigned ? '(Unassigned)' :
+                                   item.isInMultipleGroups ? '(Multiple Groups)' :
+                                   `(${groupNames})`;
+
+                output.textContent += `${index + 1}. ${item.contact.name} - ${item.contact.phone}\n`;
+                output.textContent += `   Groups: ${groupStatus}\n\n`;
+            });
+        }
+
+        function showUnassignedContacts() {
+            const output = document.getElementById('search-output');
+            const unassignedContacts = searchService.getUnassignedContacts();
+
+            output.textContent = `📋 Unassigned Contacts (${unassignedContacts.length}):\n\n`;
+            if (unassignedContacts.length > 0) {
+                unassignedContacts.forEach((contact, index) => {
+                    output.textContent += `${index + 1}. ${contact.name} - ${contact.phone}\n`;
+                    output.textContent += `   📧 ${contact.email}\n`;
+                    output.textContent += `   💡 Not assigned to any groups yet\n\n`;
+                });
+            } else {
+                output.textContent += `✅ All contacts are assigned to groups!`;
+            }
+        }
+
+        function showMultiGroupContacts() {
+            const output = document.getElementById('search-output');
+            const multiGroupContacts = searchService.getMultiGroupContacts();
+
+            output.textContent = `👥 Contacts in Multiple Groups (${multiGroupContacts.length}):\n\n`;
+            multiGroupContacts.forEach((item, index) => {
+                const groupNames = item.groups.map(g => g.name).join(', ');
+                output.textContent += `${index + 1}. ${item.contact.name} - ${item.contact.phone}\n`;
+                output.textContent += `   Groups: ${groupNames}\n`;
+                output.textContent += `   💡 Shows realistic overlapping relationships\n\n`;
+            });
+        }
+
         function generateStats() {
             const output = document.getElementById('search-output');
             const stats = searchService.getStats();
 
             output.textContent = `📊 Contact Manager Statistics:\n\n`;
+            output.textContent += `📱 Contacts Overview:\n`;
             output.textContent += `Total Contacts: ${stats.totalContacts}\n`;
+            output.textContent += `Assigned to Groups: ${stats.assignedContacts}\n`;
+            output.textContent += `Unassigned: ${stats.unassignedContacts}\n`;
+            output.textContent += `In Multiple Groups: ${stats.multiGroupContacts}\n\n`;
+
+            output.textContent += `👥 Groups Overview:\n`;
             output.textContent += `Total Groups: ${stats.totalGroups}\n`;
             output.textContent += `Average Contacts per Group: ${stats.averageContactsPerGroup}\n\n`;
 
-            output.textContent += `Group Breakdown:\n`;
-            Object.entries(stats.groupTypeBreakdown).forEach(([type, count]) => {
-                output.textContent += `- ${type}: ${count} groups\n`;
+            output.textContent += `📋 Contacts by Group Type:\n`;
+            Object.entries(stats.contactsPerGroupType).forEach(([type, count]) => {
+                output.textContent += `• ${type.charAt(0).toUpperCase() + type.slice(1)}: ${count} contacts\n`;
             });
+
+            if (stats.unassignedContacts > 0) {
+                output.textContent += `\n💡 Tip: Use "Show Unassigned" to see contacts not in any groups`;
+            }
         }
 
         // === ARCHITECTURE DEMONSTRATION ===

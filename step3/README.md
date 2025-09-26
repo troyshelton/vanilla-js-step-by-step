@@ -69,6 +69,19 @@ cp ../step2/GroupService.js .
         // 2. Get all contact IDs from those groups
         // 3. Get actual contact objects from contactService
         // 4. Return unique contacts (no duplicates)
+        // Note: Same person might appear in multiple groups (realistic!)
+    };
+
+    // TODO: Get unassigned contacts
+    SearchService.prototype.getUnassignedContacts = function() {
+        // Use groupService.getUnassignedContacts() method
+        // Returns contacts not assigned to any groups yet
+    };
+
+    // TODO: Get all contacts with group information
+    SearchService.prototype.getAllContactsWithGroupInfo = function() {
+        // Use groupService.getAllContactsWithGroups() method
+        // Shows each contact with their group memberships
     };
 
     // TODO: Static method to use global services
