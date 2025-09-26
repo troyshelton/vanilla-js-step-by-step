@@ -122,14 +122,12 @@
         <h2>👥 Group Management</h2>
 
         <div class="input-group">
-            <input type="text" id="group-name" placeholder="Group Name" value="Best Friends">
-            <select id="group-type">
-                <option value="family">Family</option>
-                <option value="friends" selected>Friends</option>
-                <option value="coworkers">Coworkers</option>
-            </select>
+            <input type="text" id="group-name" placeholder="Group Name (e.g., Family, Church, Fishing Buddies)" value="">
             <button onclick="createGroup()">Create Group</button>
         </div>
+        <p style="margin: 10px 0; font-style: italic; color: #666;">
+            💡 Create any type of group: Family, Friends, Coworkers, Church, Fishing, Book Club, etc.
+        </p>
 
         <div class="button-group">
             <button onclick="listAllGroups()">List All Groups</button>
@@ -152,9 +150,7 @@
             <button onclick="showUnassignedContacts()">Show Unassigned</button>
         </div>
         <div class="button-group">
-            <button onclick="showFamilyContacts()">Show Family</button>
-            <button onclick="showFriendsContacts()">Show Friends</button>
-            <button onclick="showCoworkerContacts()">Show Coworkers</button>
+            <button onclick="showGroupsList()">Show Groups & Members</button>
         </div>
         <div id="search-output" class="output">Search results will appear here...</div>
     </div>
@@ -226,7 +222,7 @@
                 checkbox.value = group.id;
 
                 label.appendChild(checkbox);
-                label.appendChild(document.createTextNode(` ${group.name} (${group.type})`));
+                label.appendChild(document.createTextNode(` ${group.name}`));
                 checkboxContainer.appendChild(label);
             });
 
@@ -379,13 +375,13 @@
         // === GROUP MANAGEMENT FUNCTIONS ===
 
         function createGroup() {
-            const name = document.getElementById('group-name').value;
-            const type = document.getElementById('group-type').value;
+            const name = document.getElementById('group-name').value.trim();
             const output = document.getElementById('group-output');
 
             if (name) {
-                const groupId = groupService.createGroup(name, type);
-                output.textContent = `✅ Group created: "${name}" (${type})\nID: ${groupId}\n\n`;
+                // Use the group name as its own type (no artificial categorization)
+                const groupId = groupService.createGroup(name, name.toLowerCase());
+                output.textContent = `✅ Group created: "${name}"\nID: ${groupId}\n\n`;
 
                 // DYNAMIC UPDATE: Refresh checkboxes in contact section
                 updateGroupCheckboxes();
@@ -394,8 +390,9 @@
                 output.textContent += `💡 Go to Contact Management - "${name}" now available for assignment\n\n`;
                 output.textContent += `🔍 This demonstrates:\n`;
                 output.textContent += `• Service data driving UI updates\n`;
-                output.textContent += `• Dynamic content based on service changes\n`;
-                output.textContent += `• Real-world responsive interface patterns`;
+                output.textContent += `• Dynamic content generation from service state\n`;
+                output.textContent += `• Flexible group creation (no artificial categories)\n`;
+                output.textContent += `• Real-world contact organization patterns`;
 
                 // Clear input
                 document.getElementById('group-name').value = '';
@@ -497,34 +494,39 @@
             }
         }
 
-        function showFamilyContacts() {
+        function showGroupsList() {
             const output = document.getElementById('search-output');
-            const familyContacts = searchService.getContactsByGroupType('family');
+            const groups = groupService.getAllGroups();
 
-            output.textContent = `👨‍👩‍👧‍👦 Family Contacts (${familyContacts.length}):\n\n`;
-            familyContacts.forEach((contact, index) => {
-                output.textContent += `${index + 1}. ${contact.name} - ${contact.phone}\n`;
+            if (groups.length === 0) {
+                output.textContent = '❌ No groups created yet!\n\n';
+                output.textContent += '💡 Create groups using Group Management section';
+                return;
+            }
+
+            output.textContent = `👥 All Groups & Their Members:\n\n`;
+
+            groups.forEach((group, index) => {
+                // Get contacts in this specific group
+                const groupContacts = groupService.getContactsInGroup(group.id, contactService);
+
+                output.textContent += `${index + 1}. ${group.name} (${groupContacts.length} members)\n`;
+
+                if (groupContacts.length > 0) {
+                    groupContacts.forEach(contact => {
+                        output.textContent += `   • ${contact.name} - ${contact.phone}\n`;
+                    });
+                } else {
+                    output.textContent += `   (No members yet)\n`;
+                }
+                output.textContent += `\n`;
             });
-        }
 
-        function showFriendsContacts() {
-            const output = document.getElementById('search-output');
-            const friendsContacts = searchService.getContactsByGroupType('friends');
-
-            output.textContent = `👫 Friends (${friendsContacts.length}):\n\n`;
-            friendsContacts.forEach((contact, index) => {
-                output.textContent += `${index + 1}. ${contact.name} - ${contact.phone}\n`;
-            });
-        }
-
-        function showCoworkerContacts() {
-            const output = document.getElementById('search-output');
-            const coworkerContacts = searchService.getContactsByGroupType('coworkers');
-
-            output.textContent = `💼 Coworkers (${coworkerContacts.length}):\n\n`;
-            coworkerContacts.forEach((contact, index) => {
-                output.textContent += `${index + 1}. ${contact.name} - ${contact.phone}\n`;
-            });
+            output.textContent += `🔍 This demonstrates:\n`;
+            output.textContent += `• GroupService managing any type of group\n`;
+            output.textContent += `• SearchService coordinating with GroupService\n`;
+            output.textContent += `• Flexible contact organization patterns\n`;
+            output.textContent += `• No artificial type restrictions`;
         }
 
         function showAllContacts() {
