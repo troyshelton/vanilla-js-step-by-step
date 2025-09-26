@@ -101,7 +101,14 @@
             <input type="text" id="contact-name" placeholder="Name" value="John Smith">
             <input type="text" id="contact-phone" placeholder="Phone" value="555-0123">
             <input type="text" id="contact-email" placeholder="Email" value="john@email.com">
-            <button onclick="addContact()">Add Contact</button>
+
+            <h4>Assign to Groups (optional):</h4>
+            <div id="group-checkboxes">
+                <!-- Dynamic checkboxes will appear here -->
+                <p>💡 Create groups first to see assignment options</p>
+            </div>
+
+            <button onclick="addContactWithGroups()">Add Contact</button>
         </div>
 
         <div class="button-group">
@@ -142,6 +149,9 @@
 
         <div class="button-group">
             <button onclick="showAllContacts()">Show All Contacts</button>
+            <button onclick="showUnassignedContacts()">Show Unassigned</button>
+        </div>
+        <div class="button-group">
             <button onclick="showFamilyContacts()">Show Family</button>
             <button onclick="showFriendsContacts()">Show Friends</button>
             <button onclick="showCoworkerContacts()">Show Coworkers</button>
@@ -192,6 +202,100 @@
         });
 
         // === CONTACT MANAGEMENT FUNCTIONS ===
+
+        // Update group checkboxes when groups change
+        function updateGroupCheckboxes() {
+            const checkboxContainer = document.getElementById('group-checkboxes');
+            const groups = groupService.getAllGroups();
+
+            if (groups.length === 0) {
+                checkboxContainer.innerHTML = '<p>💡 Create groups first to see assignment options</p>';
+                return;
+            }
+
+            // Create dynamic checkboxes for each group
+            checkboxContainer.innerHTML = '';
+            groups.forEach(group => {
+                const label = document.createElement('label');
+                label.style.display = 'block';
+                label.style.margin = '5px 0';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = `group-${group.id}`;
+                checkbox.value = group.id;
+
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(` ${group.name} (${group.type})`));
+                checkboxContainer.appendChild(label);
+            });
+
+            // Add explanation
+            const explanation = document.createElement('p');
+            explanation.style.fontStyle = 'italic';
+            explanation.style.margin = '10px 0';
+            explanation.textContent = '💡 Leave unchecked to keep contact unassigned (you can assign later)';
+            checkboxContainer.appendChild(explanation);
+
+            console.log(`🔄 Updated group checkboxes - now showing ${groups.length} groups`);
+        }
+
+        function addContactWithGroups() {
+            const name = document.getElementById('contact-name').value;
+            const phone = document.getElementById('contact-phone').value;
+            const email = document.getElementById('contact-email').value;
+            const output = document.getElementById('contact-output');
+
+            if (!name || !phone || !email) {
+                output.textContent = '❌ Please fill in all fields (name, phone, email)';
+                return;
+            }
+
+            // Add the contact first
+            const contactId = contactService.addContact(name, phone, email);
+
+            // Get selected groups
+            const selectedGroups = [];
+            const checkboxes = document.querySelectorAll('#group-checkboxes input[type="checkbox"]:checked');
+
+            checkboxes.forEach(checkbox => {
+                const groupId = checkbox.value;
+                const groupName = checkbox.parentElement.textContent.trim();
+                selectedGroups.push({ id: groupId, name: groupName });
+
+                // Assign contact to selected group
+                groupService.addContactToGroup(groupId, contactId);
+            });
+
+            // Show results
+            output.textContent = `✅ Contact added: ${name}\n`;
+            output.textContent += `📧 ${email} | 📞 ${phone}\n\n`;
+
+            if (selectedGroups.length > 0) {
+                output.textContent += `👥 Assigned to groups:\n`;
+                selectedGroups.forEach(group => {
+                    output.textContent += `• ${group.name}\n`;
+                });
+                output.textContent += `\n🔍 This demonstrates:\n`;
+                output.textContent += `• ContactService creating contact\n`;
+                output.textContent += `• GroupService linking contact to groups\n`;
+                output.textContent += `• Services communicating through method calls`;
+            } else {
+                output.textContent += `📝 Status: Unassigned (no groups selected)\n\n`;
+                output.textContent += `🔍 This demonstrates:\n`;
+                output.textContent += `• Contacts can exist without group assignments\n`;
+                output.textContent += `• Optional relationships in service architecture\n`;
+                output.textContent += `• Use "Show All Contacts" to see unassigned contacts`;
+            }
+
+            // Clear form
+            document.getElementById('contact-name').value = '';
+            document.getElementById('contact-phone').value = '';
+            document.getElementById('contact-email').value = '';
+
+            // Uncheck all group checkboxes
+            document.querySelectorAll('#group-checkboxes input[type="checkbox"]').forEach(cb => cb.checked = false);
+        }
 
         function addContact() {
             const name = document.getElementById('contact-name').value;
@@ -281,7 +385,17 @@
 
             if (name) {
                 const groupId = groupService.createGroup(name, type);
-                output.textContent = `✅ Group created: "${name}" (${type})\nID: ${groupId}`;
+                output.textContent = `✅ Group created: "${name}" (${type})\nID: ${groupId}\n\n`;
+
+                // DYNAMIC UPDATE: Refresh checkboxes in contact section
+                updateGroupCheckboxes();
+
+                output.textContent += `🔄 Contact assignment options updated!\n`;
+                output.textContent += `💡 Go to Contact Management - "${name}" now available for assignment\n\n`;
+                output.textContent += `🔍 This demonstrates:\n`;
+                output.textContent += `• Service data driving UI updates\n`;
+                output.textContent += `• Dynamic content based on service changes\n`;
+                output.textContent += `• Real-world responsive interface patterns`;
 
                 // Clear input
                 document.getElementById('group-name').value = '';
@@ -432,6 +546,32 @@
             output.textContent += '• SearchService accessing ContactService data\n';
             output.textContent += '• Service method calls: searchService.getAllContacts()\n';
             output.textContent += '• Cross-service communication through global namespace';
+        }
+
+        function showUnassignedContacts() {
+            const output = document.getElementById('search-output');
+            const unassignedContacts = searchService.getUnassignedContacts();
+
+            output.textContent = `📋 Unassigned Contacts (${unassignedContacts.length}):\n\n`;
+
+            if (unassignedContacts.length === 0) {
+                output.textContent += '✅ All contacts are assigned to groups!\n\n';
+                output.textContent += '💡 Try adding a contact without checking any groups';
+            } else {
+                unassignedContacts.forEach((contact, index) => {
+                    output.textContent += `${index + 1}. ${contact.name} - ${contact.phone}\n`;
+                    output.textContent += `   📧 ${contact.email}\n`;
+                    output.textContent += `   ID: ${contact.id.substr(-8)}\n\n`;
+                });
+
+                output.textContent += '🔍 This demonstrates:\n';
+                output.textContent += '• GroupService finding contacts NOT in any groups\n';
+                output.textContent += '• SearchService coordinating between services\n';
+                output.textContent += '• Optional relationships in service architecture\n\n';
+
+                output.textContent += '💡 To assign these contacts:\n';
+                output.textContent += 'Use console: groupService.addContactToGroup(groupId, contactId)';
+            }
         }
 
 
