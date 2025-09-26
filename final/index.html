@@ -296,8 +296,24 @@
             const contacts = contactService.getAllContacts();
             const groups = groupService.getAllGroups();
 
-            if (contacts.length === 0 || groups.length === 0) {
-                output.textContent = '❌ Need both contacts and groups first!\nTry "Add Sample Data" buttons.';
+            // Check for existing contacts
+            if (contacts.length === 0) {
+                output.textContent = '❌ No contacts found!\n\n';
+                output.textContent += '📋 Required Steps:\n';
+                output.textContent += '1. Go to "Contact Management" section\n';
+                output.textContent += '2. Click "Add Sample Contacts" button\n';
+                output.textContent += '3. Come back and try again\n\n';
+                output.textContent += '💡 This function only assigns EXISTING contacts to groups';
+                return;
+            }
+
+            // Check for existing groups
+            if (groups.length === 0) {
+                output.textContent = '❌ No groups found!\n\n';
+                output.textContent += '📋 Required Steps:\n';
+                output.textContent += '1. Click "Create Sample Groups" button first\n';
+                output.textContent += '2. Then try assigning contacts to groups\n\n';
+                output.textContent += '💡 This function only assigns contacts to EXISTING groups';
                 return;
             }
 
@@ -329,15 +345,18 @@
                 }
             });
 
-            output.textContent = '✅ Contacts assigned realistically:\n\n';
-            output.textContent += '👥 Multiple Group Memberships:\n';
-            output.textContent += '• Sarah: Friends + Coworkers\n';
-            output.textContent += '• Mike: Family + Friends\n';
-            output.textContent += '• Dr. Chen: Family + Coworkers\n\n';
+            output.textContent = `✅ Successfully assigned ${contacts.length} existing contacts to groups!\n\n`;
+            output.textContent += '👥 Multiple Group Memberships Created:\n';
+            output.textContent += '• Sarah Johnson: Friends + Coworkers (friend who got hired)\n';
+            output.textContent += '• Mike Smith: Family + Friends (brother relationship)\n';
+            output.textContent += '• Dr. Lisa Chen: Family + Coworkers (family doctor)\n\n';
             output.textContent += '👤 Single Group Memberships:\n';
-            output.textContent += '• Bob: Coworkers only\n';
-            output.textContent += '• John: Friends only\n\n';
-            output.textContent += '📊 Check "Generate Statistics" to see results!';
+            output.textContent += '• Bob Wilson: Coworkers only\n';
+            output.textContent += '• John Smith: Friends only\n\n';
+            output.textContent += '🔍 Try these views:\n';
+            output.textContent += '• "Show All Contacts" - see everyone with group status\n';
+            output.textContent += '• "Multiple Groups" - see realistic overlapping relationships\n';
+            output.textContent += '• "Generate Statistics" - see assignment breakdown';
         }
 
         function listAllGroups() {
