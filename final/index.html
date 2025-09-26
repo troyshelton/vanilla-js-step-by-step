@@ -104,9 +104,12 @@
             <input type="text" id="contact-name" placeholder="Name" value="John Smith" style="flex: 1; min-width: 150px;">
             <input type="text" id="contact-phone" placeholder="Phone" value="555-0123" style="flex: 1; min-width: 120px;">
             <input type="text" id="contact-email" placeholder="Email" value="john@email.com" style="flex: 1; min-width: 180px;">
-            <select id="group-multiselect" multiple style="flex: 1; min-width: 180px; height: 60px; padding: 5px; border: 2px solid #ddd; border-radius: 4px; font-family: Arial, sans-serif;">
-                <!-- Dynamic options will appear here -->
-            </select>
+            <div style="flex: 1; min-width: 180px; position: relative;">
+                <label for="group-multiselect" style="font-size: 12px; color: #666; margin-bottom: 2px; display: block;">Groups (optional)</label>
+                <select id="group-multiselect" multiple style="width: 100%; height: 60px; padding: 5px; border: 2px solid #ddd; border-radius: 4px; font-family: Arial, sans-serif;">
+                    <option disabled selected style="font-style: italic; color: #999;">Select groups... (create groups first)</option>
+                </select>
+            </div>
             <button onclick="addContactWithGroups()" style="white-space: nowrap;">Add Contact</button>
         </div>
 
@@ -218,14 +221,11 @@
 
             if (groups.length === 0) {
                 placeholderOption.textContent = 'Select groups... (create groups first)';
-            } else {
-                placeholderOption.textContent = 'Select groups... (Ctrl+Click for multiple)';
-            }
-
-            multiSelect.appendChild(placeholderOption);
-
-            if (groups.length === 0) {
+                multiSelect.appendChild(placeholderOption);
                 return;
+            } else {
+                placeholderOption.textContent = 'Select groups... (optional)';
+                multiSelect.appendChild(placeholderOption);
             }
 
             // Add option for each group
@@ -294,8 +294,7 @@
             document.getElementById('contact-email').value = '';
 
             // Reset multi-select to placeholder
-            const multiSelect = document.getElementById('group-multiselect');
-            multiSelect.selectedIndex = 0; // Select the placeholder option
+            document.getElementById('group-multiselect').selectedIndex = 0;
         }
 
         function addContact() {
