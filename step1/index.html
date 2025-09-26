@@ -99,7 +99,6 @@
 
         <div class="button-group">
             <button onclick="showAllContacts()">Show All Contacts</button>
-            <button onclick="searchContactDemo()">Search Contact Demo</button>
             <button class="danger-btn" onclick="clearContacts()">Clear All</button>
         </div>
 
@@ -198,30 +197,6 @@
             output.textContent += `• Each instance maintains its own separate data`;
         }
 
-        function searchContactDemo() {
-            const output = document.getElementById('contact-output');
-            const contacts = contactService.getAllContacts();
-
-            if (contacts.length === 0) {
-                output.textContent = '❌ Add contacts first to test search functionality';
-                return;
-            }
-
-            // Use first contact for demo
-            const searchTerm = contacts[0].name.split(' ')[0].toLowerCase();
-            const found = contactService.findContact(searchTerm);
-
-            output.textContent = `🔍 Searching for "${searchTerm}":\n\n`;
-            if (found) {
-                output.textContent += `✅ Found: ${found.name}\n`;
-                output.textContent += `📞 ${found.phone}\n`;
-                output.textContent += `📧 ${found.email}\n\n`;
-                output.textContent += `🔍 What this demonstrates:\n`;
-                output.textContent += `• findContact() method searches this.contacts array\n`;
-                output.textContent += `• Case-insensitive search using toLowerCase()\n`;
-                output.textContent += `• Returns contact object or null if not found`;
-            }
-        }
 
         function clearContacts() {
             contactService = new ContactService();
