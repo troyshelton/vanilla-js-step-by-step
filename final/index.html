@@ -124,10 +124,6 @@
             💡 Create any type of group: Family, Friends, Coworkers, Church, Fishing, Book Club, etc.
         </p>
 
-        <div class="button-group">
-            <button onclick="listAllGroups()">List All Groups</button>
-            <button onclick="manuallyAssignContact()">Assign Contact to Group</button>
-        </div>
         <div id="group-output" class="output">Group operations will appear here...</div>
     </div>
 
@@ -297,38 +293,6 @@
             }
         }
 
-        function manuallyAssignContact() {
-            const output = document.getElementById('group-output');
-            const contacts = contactService.getAllContacts();
-            const groups = groupService.getAllGroups();
-
-            if (contacts.length === 0) {
-                output.textContent = '❌ No contacts found!\nAdd contacts first using the Contact Management section.';
-                return;
-            }
-
-            if (groups.length === 0) {
-                output.textContent = '❌ No groups found!\nCreate groups first using the Group Management section.';
-                return;
-            }
-
-            // Simple manual assignment interface
-            output.textContent = '📝 Manual Assignment (Simple Demo):\n\n';
-            output.textContent += 'Available Contacts:\n';
-            contacts.forEach((contact, index) => {
-                output.textContent += `${index + 1}. ${contact.name} (ID: ${contact.id.substr(-5)})\n`;
-            });
-
-            output.textContent += '\nAvailable Groups:\n';
-            groups.forEach((group, index) => {
-                output.textContent += `${index + 1}. ${group.name} (${group.type})\n`;
-            });
-
-            output.textContent += '\n💡 Console Demo:\n';
-            output.textContent += 'Try in browser console (F12):\n';
-            output.textContent += `groupService.addContactToGroup('${groups[0]?.id}', '${contacts[0]?.id}');\n`;
-            output.textContent += 'This demonstrates how services communicate!';
-        }
 
 
 
@@ -405,20 +369,6 @@
             }
         }
 
-        function listAllGroups() {
-            const output = document.getElementById('group-output');
-            const groups = groupService.getAllGroups();
-
-            output.textContent = `👥 All Groups (${groups.length}):\n\n`;
-            groups.forEach((group, index) => {
-                output.textContent += `${index + 1}. ${group.name} (${group.type})\n`;
-                output.textContent += `   Members: ${group.contactIds.length}\n\n`;
-            });
-
-            if (groups.length === 0) {
-                output.textContent += '💡 Create groups using the input above!';
-            }
-        }
 
         // === SEARCH FUNCTIONS ===
 
