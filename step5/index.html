@@ -509,6 +509,112 @@
         }
 
 
+        // === CONSOLE HELPER FUNCTIONS FOR ID LOOKUP ===
+
+        // Get all contact IDs in a nice table format
+        window.getContactIds = function() {
+            const contacts = contactService.getAllContacts();
+            if (contacts.length === 0) {
+                console.log('📱 No contacts yet!');
+                return [];
+            }
+            console.log('📱 All Contact IDs:');
+            console.table(contacts.map(c => ({
+                ID: c.id,
+                Name: c.name,
+                Phone: c.phone,
+                Email: c.email
+            })));
+            return contacts;
+        };
+
+        // Get all group IDs in a nice table format
+        window.getGroupIds = function() {
+            const groups = groupService.getAllGroups();
+            if (groups.length === 0) {
+                console.log('👥 No groups yet!');
+                return [];
+            }
+            console.log('👥 All Group IDs:');
+            console.table(groups.map(g => ({
+                ID: g.id,
+                Name: g.name,
+                Members: g.contactIds.length
+            })));
+            return groups;
+        };
+
+        // Find contact ID by searching name
+        window.findContactId = function(searchTerm) {
+            const found = contactService.findContact(searchTerm);
+            if (found) {
+                console.log(`✅ Found: ${found.name}`);
+                console.log(`📋 ID: ${found.id}`);
+                console.log(`\n💡 Copy this ID to use in edit/delete commands`);
+                return found.id;
+            } else {
+                console.log(`❌ No contact found containing: "${searchTerm}"`);
+                return null;
+            }
+        };
+
+        // Show all IDs formatted for easy copy/paste
+        window.showIds = function() {
+            console.group('📋 All IDs (Easy Copy/Paste Format)');
+
+            const contacts = contactService.getAllContacts();
+            const groups = groupService.getAllGroups();
+
+            console.log('\n👥 CONTACTS:');
+            if (contacts.length === 0) {
+                console.log('  (No contacts yet)');
+            } else {
+                contacts.forEach(c => {
+                    console.log(`  ${c.name}: '${c.id}'`);
+                });
+            }
+
+            console.log('\n🏷️  GROUPS:');
+            if (groups.length === 0) {
+                console.log('  (No groups yet)');
+            } else {
+                groups.forEach(g => {
+                    console.log(`  ${g.name}: '${g.id}'`);
+                });
+            }
+
+            console.groupEnd();
+            console.log('\n💡 Copy the IDs from above to use in your commands');
+            return { contacts, groups };
+        };
+
+        // Help function - shows all available console commands
+        window.help = function() {
+            console.group('💡 Available Console Commands - Step 5');
+
+            console.log('\n📋 ID Lookup Helpers:');
+            console.log('  getContactIds()              - Show all contact IDs in table');
+            console.log('  getGroupIds()                - Show all group IDs in table');
+            console.log('  findContactId("name")        - Find specific contact ID');
+            console.log('  showIds()                    - Show all IDs for copy/paste');
+
+            console.log('\n✏️ Edit Operations:');
+            console.log('  editContact(contactId)       - Get edit instructions');
+            console.log('  contactService.updateContact(id, {name, phone, email})');
+
+            console.log('\n🗑️ Delete Operations:');
+            console.log('  deleteContact(contactId)     - Delete with confirmation');
+
+            console.log('\n🔄 Group Operations:');
+            console.log('  changeContactGroups(contactId, [groupId1, groupId2])');
+
+            console.log('\n🔄 Refresh:');
+            console.log('  refreshManageView()          - Update management panel');
+
+            console.groupEnd();
+            console.log('\n🎯 Start with: showIds() to see all available IDs!');
+        };
+
         // === EDIT & DELETE CONTACT MANAGEMENT ===
 
         let editingContactId = null;
