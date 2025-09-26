@@ -171,4 +171,4 @@ console.log(service2.getAllContacts().length);  // Should be 1
 Once this works, you'll add GroupService and learn about service dependencies!
 
 ---
-**💡 Tip**: Open `../final/index.html` if you get stuck - it shows the working solution!
+**💡 Tip**: This step has working code - study ContactService.js and index.html to learn!

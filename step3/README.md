@@ -240,4 +240,5 @@ window.ContactService = original;
 Final step: Convert ContactService to ES6 classes and compare!
 
 ---
-**💡 Stuck? Check `../final/` for the complete working version**
+**🎉 Congratulations! You've completed the core tutorial and built a complete Contact Manager!**
+**Optional: Continue to Step 4 (prototype vs ES6) or Step 5 (update/delete operations)**

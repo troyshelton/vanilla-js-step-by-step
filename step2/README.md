@@ -179,4 +179,4 @@ const group2 = new GroupService();
 Next: Add SearchService that uses BOTH ContactService and GroupService!
 
 ---
-**💡 Need help? Check `../final/` for the complete working version**
+**💡 This step has working code - study the service files to learn! Next: Step 3 adds SearchService**
