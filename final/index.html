@@ -115,7 +115,6 @@
 
         <div class="button-group">
             <button onclick="listAllContacts()">List All Contacts</button>
-            <button onclick="findContactDemo()">Find Contact Demo</button>
         </div>
         <div id="contact-output" class="output">Contact operations will appear here...</div>
     </div>
@@ -349,20 +348,6 @@
             });
         }
 
-        function findContactDemo() {
-            const output = document.getElementById('contact-output');
-            const searchTerm = 'john';
-            const contact = contactService.findContact(searchTerm);
-
-            output.textContent = `🔍 Finding contact with name containing "${searchTerm}":\n\n`;
-            if (contact) {
-                output.textContent += `✅ Found: ${contact.name}\n`;
-                output.textContent += `📞 ${contact.phone}\n`;
-                output.textContent += `✉️ ${contact.email}`;
-            } else {
-                output.textContent += `❌ No contact found containing "${searchTerm}"`;
-            }
-        }
 
         // === GROUP MANAGEMENT FUNCTIONS ===
 
