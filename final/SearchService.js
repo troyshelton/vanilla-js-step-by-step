@@ -102,7 +102,7 @@
     };
 
     // Static method to create SearchService with global services
-    SearchService.createWithGlobalServices = function() {
+    SearchService.createWithGlobalServices = function(existingContactService, existingGroupService) {
         // Check if required services are available globally
         if (typeof window.ContactService === 'undefined') {
             throw new Error('❌ ContactService not found! Load ContactService.js first.');
@@ -111,9 +111,9 @@
             throw new Error('❌ GroupService not found! Load GroupService.js first.');
         }
 
-        // Create instances from global services
-        const contactService = new window.ContactService();
-        const groupService = new window.GroupService();
+        // Use existing instances if provided, otherwise create new ones
+        const contactService = existingContactService || new window.ContactService();
+        const groupService = existingGroupService || new window.GroupService();
 
         console.log('🔗 SearchService created with global services');
         return new SearchService(contactService, groupService);

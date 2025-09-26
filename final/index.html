@@ -181,7 +181,7 @@
             try {
                 contactService = new ContactService();
                 groupService = new GroupService();
-                searchService = SearchService.createWithGlobalServices();
+                searchService = SearchService.createWithGlobalServices(contactService, groupService);
 
                 console.log('🎉 All services initialized successfully!');
                 generateStats(); // Show initial stats
